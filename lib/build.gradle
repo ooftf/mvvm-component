@@ -1,5 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
@@ -31,16 +35,21 @@ publish {
     repoName = 'maven'
     userOrg = 'ooftf'      // bintray注册的用户名
     groupId = 'com.ooftf'
-    artifactId = 'http-ui-maping' // bintray创建的package
-    publishVersion = '0.0.1-SNAPSHOT'
+    artifactId = 'http-ui-mapping' // bintray创建的package
+    publishVersion = '0.0.1'
     desc = 'nothing'
     bintrayUser = 'ooftf'
     bintrayKey = LocalBintrayKey()
     dryRun = false
 }
+tasks.withType(Javadoc) {
+    enabled = false
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'androidx.appcompat:appcompat:1.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -51,5 +60,6 @@ dependencies {
     api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-andx-14'
     api "com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-14"
     api 'com.alibaba:arouter-api:1.5.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
 }

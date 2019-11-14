@@ -1,17 +1,14 @@
 package com.ooftf.mapping.lib.ui;
 
 import android.app.Activity;
-import android.os.Looper;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
 import com.alibaba.android.arouter.facade.Postcard;
-import com.chiatai.premix.lib.base.engine.LostMutableLiveData;
 import com.chiatai.premix.lib.base.net.ui.BaseLiveDataObserve;
 import com.chiatai.premix.lib.base.net.ui.CallOwner;
 import com.chiatai.premix.lib.base.net.ui.FinishData;
-import com.chiatai.premix.lib.base.util.ThreadUtil;
 import com.ooftf.mapping.lib.LostMutableLiveData;
 import com.ooftf.mapping.lib.ThreadUtil;
 import com.ooftf.widget.statelayout.IStateLayout;
@@ -20,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import retrofit2.Call;
 
 /**
  * @author ooftf
@@ -105,7 +100,7 @@ public class BaseLiveData {
      * showDialog
      */
     public void showDialog(CallOwner call) {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             if (showLoading.getValue() == null) {
                 ArrayList<CallOwner> calls = new ArrayList<>();
                 calls.add(call);
@@ -123,7 +118,7 @@ public class BaseLiveData {
      * dismissDialog
      */
     public void dismissDialog(CallOwner call) {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             if (showLoading.getValue() == null) {
                 showLoading.setValue(new ArrayList<>());
             } else {
@@ -142,7 +137,7 @@ public class BaseLiveData {
 
 
     public void startRefresh() {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             if (smartRefresh.getValue() == null) {
                 smartRefresh.setValue(1);
             } else {
@@ -152,7 +147,7 @@ public class BaseLiveData {
     }
 
     public void finishRefresh() {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             if (smartRefresh.getValue() == null) {
                 smartRefresh.setValue(0);
             } else {
@@ -171,25 +166,25 @@ public class BaseLiveData {
 
 
     public void switchToEmpty() {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             stateLayout.setValue(IStateLayout.STATE_EMPTY);
         });
     }
 
     public void switchToLoading() {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             stateLayout.setValue(IStateLayout.STATE_LOAD);
         });
     }
 
     public void switchToError() {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             stateLayout.setValue(IStateLayout.STATE_ERROR);
         });
     }
 
     public void switchToSuccess() {
-        ThreadUtil.runOnUiThread(() -> {
+        ThreadUtil.INSTANCE.runOnUiThread(() -> {
             stateLayout.setValue(IStateLayout.STATE_SUCCESS);
         });
     }

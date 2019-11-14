@@ -9,14 +9,14 @@ import android.view.Window;
  * @email 994749769@qq.com
  * @date 2019/11/14
  */
-public class HttpUiMaping {
+public class HttpUiMapping {
     private static provider provider;
 
     public static void init(provider provider) {
-        HttpUiMaping.provider = provider;
+        HttpUiMapping.provider = provider;
     }
 
-    public static HttpUiMaping.provider getProvider() {
+    public static HttpUiMapping.provider getProvider() {
         return provider;
     }
 

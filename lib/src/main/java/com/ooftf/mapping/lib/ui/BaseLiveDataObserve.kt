@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.ooftf.mapping.lib.HttpUiMaping
+import com.ooftf.mapping.lib.HttpUiMapping
 import com.ooftf.mapping.lib.ui.BaseLiveData
 import com.ooftf.mapping.lib.ui.UIEvent
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -21,7 +21,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
     constructor(liveData: BaseLiveData, fragment: Fragment) : this(liveData, fragment, fragment.activity!!)
 
     private val loadingDialog by lazy {
-        var dialog = HttpUiMaping.getProvider().createLoadingDialog(activity);
+        var dialog = HttpUiMapping.getProvider().createLoadingDialog(activity);
         dialog.setOnCancelListener {
             (dialog.window.decorView.tag)?.let {
                 (it as List<CallOwner>).forEach { item ->
@@ -47,7 +47,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
             }
         })
         liveData.startActivityLiveData.observe(owner, Observer { postcard -> postcard.navigation(activity) })
-        liveData.messageLiveData.observe(owner, Observer<String> { HttpUiMaping.getProvider().toast(it) })
+        liveData.messageLiveData.observe(owner, Observer<String> { HttpUiMapping.getProvider().toast(it) })
 
 
         liveData.finishWithData.observe(owner, Observer {

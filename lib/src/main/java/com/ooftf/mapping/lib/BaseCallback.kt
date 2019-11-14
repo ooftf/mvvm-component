@@ -53,7 +53,7 @@ open class BaseCallback<T : BaseResponse> : Callback<T> {
     }
 
     protected open fun onResponseLoginStatusError(body: T) {
-        HttpUiMaping.getProvider().onTokenInvalid(body)
+        HttpUiMapping.getProvider().onTokenInvalid(body)
     }
 
     protected open fun onResponseSuccess(call: Call<T>, body: T) {
