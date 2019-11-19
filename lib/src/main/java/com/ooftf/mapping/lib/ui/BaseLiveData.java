@@ -6,9 +6,6 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
 import com.alibaba.android.arouter.facade.Postcard;
-import com.chiatai.premix.lib.base.net.ui.BaseLiveDataObserve;
-import com.chiatai.premix.lib.base.net.ui.CallOwner;
-import com.chiatai.premix.lib.base.net.ui.FinishData;
 import com.ooftf.mapping.lib.LostMutableLiveData;
 import com.ooftf.mapping.lib.ThreadUtil;
 import com.ooftf.widget.statelayout.IStateLayout;

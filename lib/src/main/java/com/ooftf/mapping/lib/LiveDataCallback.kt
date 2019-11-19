@@ -2,7 +2,7 @@ package com.ooftf.mapping.lib
 
 import androidx.annotation.CallSuper
 import androidx.lifecycle.MutableLiveData
-import com.chiatai.premix.lib.base.net.ui.CallOwner
+import com.ooftf.mapping.lib.ui.CallOwner
 import com.ooftf.mapping.lib.ui.BaseLiveData
 import org.json.JSONException
 import retrofit2.Call

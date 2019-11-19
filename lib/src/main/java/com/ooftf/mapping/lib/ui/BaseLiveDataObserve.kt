@@ -1,4 +1,4 @@
-package com.chiatai.premix.lib.base.net.ui
+package com.ooftf.mapping.lib.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -7,8 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.ooftf.mapping.lib.HttpUiMapping
-import com.ooftf.mapping.lib.ui.BaseLiveData
-import com.ooftf.mapping.lib.ui.UIEvent
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 
 /**

@@ -1,4 +1,4 @@
-package com.chiatai.premix.lib.base.net.ui
+package com.ooftf.mapping.lib.ui
 
 import retrofit2.Call
 
