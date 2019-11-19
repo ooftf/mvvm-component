@@ -30,13 +30,17 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    dataBinding {
+        enabled true
+    }
+
 }
 publish {
     repoName = 'maven'
     userOrg = 'ooftf'      // bintray注册的用户名
     groupId = 'com.ooftf'
     artifactId = 'http-ui-mapping' // bintray创建的package
-    publishVersion = '0.0.4'
+    publishVersion = '0.0.5'
     desc = 'nothing'
     bintrayUser = 'ooftf'
     bintrayKey = LocalBintrayKey()
