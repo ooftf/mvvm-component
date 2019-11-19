@@ -36,7 +36,7 @@ publish {
     userOrg = 'ooftf'      // bintray注册的用户名
     groupId = 'com.ooftf'
     artifactId = 'http-ui-mapping' // bintray创建的package
-    publishVersion = '0.0.2'
+    publishVersion = '0.0.4'
     desc = 'nothing'
     bintrayUser = 'ooftf'
     bintrayKey = LocalBintrayKey()

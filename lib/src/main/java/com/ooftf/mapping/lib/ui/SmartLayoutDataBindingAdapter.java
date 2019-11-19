@@ -26,4 +26,33 @@ public class SmartLayoutDataBindingAdapter {
             smartRefreshLayout.finishLoadMoreWithNoMoreData();
         }
     }
+
+    @BindingAdapter(value = "loadMoreListener", requireAll = false)
+    public static void setOnLoadMoreListener(SmartRefreshLayout smartRefreshLayout, Runnable f) {
+        if (f == null) {
+            return;
+        }
+        smartRefreshLayout.setOnLoadMoreListener(refreshLayout -> {
+            try {
+                f.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @BindingAdapter(value = "refreshListener", requireAll = false)
+    public static void setOnRefreshListener(SmartRefreshLayout smartRefreshLayout, Runnable f) {
+        if (f == null) {
+            return;
+        }
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            try {
+                f.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 }
