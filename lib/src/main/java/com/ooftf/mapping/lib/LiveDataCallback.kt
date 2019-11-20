@@ -2,8 +2,8 @@ package com.ooftf.mapping.lib
 
 import androidx.annotation.CallSuper
 import androidx.lifecycle.MutableLiveData
-import com.ooftf.mapping.lib.ui.CallOwner
 import com.ooftf.mapping.lib.ui.BaseLiveData
+import com.ooftf.mapping.lib.ui.CallOwner
 import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Response
@@ -69,6 +69,7 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) {
+        t.printStackTrace()
         if (bindDialog) {
             baseLiveData?.dismissDialog(this)
         }
@@ -84,11 +85,11 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
         var message: String = when (t) {
             is TimeoutException, is SocketTimeoutException -> "请求超时，请重试"
             is JSONException -> "数据异常，请重试"
-            is IOException-> {
-                if(t.message == "Canceled"){
-                     "网络请求已取消"
-                }else{
-                     "网络连接错误，请重试"
+            is IOException -> {
+                if (t.message == "Canceled") {
+                    "网络请求已取消"
+                } else {
+                    "网络连接错误，请重试"
                 }
             }
             else -> "网络连接错误，请重试"
