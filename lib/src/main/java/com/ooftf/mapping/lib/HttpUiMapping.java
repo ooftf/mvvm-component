@@ -12,8 +12,9 @@ import android.view.Window;
 public class HttpUiMapping {
     private static provider provider;
 
-    public static void init(provider provider) {
+    public static void init(provider provider, boolean debug) {
         HttpUiMapping.provider = provider;
+        LogUtil.debug = debug;
     }
 
     public static HttpUiMapping.provider getProvider() {

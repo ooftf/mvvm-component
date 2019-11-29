@@ -2,6 +2,7 @@ package com.ooftf.mapping.lib.ui;
 
 import androidx.databinding.BindingAdapter;
 
+import com.ooftf.mapping.lib.LogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 /**
@@ -22,8 +23,10 @@ public class SmartLayoutDataBindingAdapter {
     public static void setLoadMoreState(SmartRefreshLayout smartRefreshLayout, int state) {
         if (state == UIEvent.SMART_LAYOUT_LOADMORE_FINISH) {
             smartRefreshLayout.finishLoadMore();
+            LogUtil.e("finishLoadMore");
         } else if (state == UIEvent.SMART_LAYOUT_LOADMORE_FINISH_AND_NO_MORE) {
             smartRefreshLayout.finishLoadMoreWithNoMoreData();
+            LogUtil.e("finishLoadMoreWithNoMoreData");
         }
     }
 
@@ -32,6 +35,7 @@ public class SmartLayoutDataBindingAdapter {
         if (f == null) {
             return;
         }
+        LogUtil.e("setOnLoadMoreListener");
         smartRefreshLayout.setOnLoadMoreListener(refreshLayout -> {
             try {
                 f.run();
