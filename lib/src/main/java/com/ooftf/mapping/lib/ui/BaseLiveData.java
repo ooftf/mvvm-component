@@ -66,6 +66,7 @@ public class BaseLiveData {
         MutableLiveData<T> mutableLiveData = dataListLiveData.get(tClass);
         if (mutableLiveData == null) {
             mutableLiveData = new MutableLiveData<>();
+            dataListLiveData.put(tClass, mutableLiveData);
         }
         return mutableLiveData;
     }
