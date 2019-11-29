@@ -16,6 +16,7 @@ public class SmartLayoutDataBindingAdapter {
         if (state == 0) {
             smartRefreshLayout.finishRefresh();
             smartRefreshLayout.resetNoMoreData();
+            LogUtil.e("finishRefresh,resetNoMoreData");
         }
     }
 

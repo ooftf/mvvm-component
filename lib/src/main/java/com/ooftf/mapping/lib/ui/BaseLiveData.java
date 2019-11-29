@@ -159,7 +159,8 @@ public class BaseLiveData {
     }
 
     public void finishLoadMoreWithNoMoreData() {
-        smartLoadMore.postValue(UIEvent.SMART_LAYOUT_LOADMORE_FINISH_AND_NO_MORE);
+        //为了让方法调用保持顺序执行，所以统一使用OnUiThread
+        ThreadUtil.INSTANCE.postOnUiThread(()-> smartLoadMore.postValue(UIEvent.SMART_LAYOUT_LOADMORE_FINISH_AND_NO_MORE));
     }
 
 

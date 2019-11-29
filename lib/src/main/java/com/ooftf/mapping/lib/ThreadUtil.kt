@@ -21,4 +21,8 @@ object ThreadUtil {
             mainHandler.post(runnable)
         }
     }
+
+    fun postOnUiThread(runnable: Runnable) {
+        mainHandler.post(runnable)
+    }
 }
