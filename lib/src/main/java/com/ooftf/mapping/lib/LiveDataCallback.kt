@@ -149,6 +149,9 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
         if (bindStateLayout) {
             baseLiveData?.switchToSuccess()
         }
+        if (bindSmart) {
+            baseLiveData?.finishLoadMoreSuccess()
+        }
         successData?.postValue(body)
         super.onResponseSuccess(call, body)
     }
