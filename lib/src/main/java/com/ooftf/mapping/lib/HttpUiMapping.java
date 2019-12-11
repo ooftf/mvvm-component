@@ -38,4 +38,9 @@ public class HttpUiMapping {
 
     }
 
+    public static void main(String[] args) {
+        Integer integer = null;
+        System.out.println("" + (integer == 0));
+    }
+
 }

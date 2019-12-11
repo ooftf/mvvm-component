@@ -58,6 +58,11 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
         return this
     }
 
+    fun bindTag(tag: Any): LiveDataCallback<T> {
+        baseLiveData.bindTag(this, tag)
+        return this
+    }
+
     fun bindDialog(): LiveDataCallback<T> {
         return bindDialog(this)
     }

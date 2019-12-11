@@ -2,6 +2,7 @@ package com.ooftf.mapping.lib.ui;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
@@ -12,6 +13,8 @@ import com.ooftf.mapping.lib.LogUtil;
 import com.ooftf.mapping.lib.LostMutableLiveData;
 import com.ooftf.mapping.lib.ThreadUtil;
 import com.ooftf.widget.statelayout.IStateLayout;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,6 +135,16 @@ public class BaseLiveData {
         });
     }
 
+    public boolean isSmartLoading() {
+        Integer value = smartRefresh.getValue();
+        return value != null && value > 0;
+    }
+
+    public boolean isStateLayoutLoading() {
+        Integer value = stateLayout.getValue();
+        return value != null && value == IStateLayout.STATE_LOAD;
+    }
+
     public void showMessage(String message) {
         this.messageLiveData.postValue(message);
     }
@@ -215,5 +228,21 @@ public class BaseLiveData {
         return new BaseLiveDataObserve(this, fragment, fragment.getActivity());
     }
 
+    Map<Object, MutableLiveData<Integer>> singleMap = new HashMap<>();
 
+    public void bindTag(@NotNull Object tag) {
+        MutableLiveData<Integer> value = getSingleValue(tag);
+        value.setValue(UIEvent.Single.LOADING);
+    }
+
+    @NonNull
+    public MutableLiveData<Integer> getSingleValue(Object tag) {
+        MutableLiveData<Integer> data = singleMap.get(tag);
+        if (data == null) {
+            data = new MutableLiveData<>();
+            data.setValue(UIEvent.Single.NOMAL);
+            singleMap.put(tag, data);
+        }
+        return data;
+    }
 }

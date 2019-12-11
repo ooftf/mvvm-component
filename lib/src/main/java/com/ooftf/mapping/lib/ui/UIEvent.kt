@@ -21,4 +21,14 @@ object UIEvent {
      * SmartLayout 加载更多结束，并且没有更多
      */
     const val SMART_LAYOUT_LOADMORE_FINISH_AND_NO_MORE = 2
+
+
+
+
+    object Single{
+        const val NOMAL = 0
+        const val LOADING = 1
+        const val SUCCESS = 2
+        const val FAIL = 3
+    }
 }
