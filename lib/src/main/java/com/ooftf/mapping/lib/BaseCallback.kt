@@ -52,10 +52,10 @@ open class BaseCallback<T : BaseResponse> : Callback<T> {
 
     }
 
-
     protected open fun onResponseLoginStatusError(body: T) {
         HttpUiMapping.getProvider().onTokenInvalid(body)
     }
+
     @CallSuper
     override fun onFailure(call: Call<T>, t: Throwable) {
         doOnAnyFailContainer.forEach { it.invoke(call) }
