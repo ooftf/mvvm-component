@@ -26,7 +26,6 @@ object UIEvent {
 
 
     object Single{
-        const val NOMAL = 0
         const val LOADING = 1
         const val SUCCESS = 2
         const val FAIL = 3

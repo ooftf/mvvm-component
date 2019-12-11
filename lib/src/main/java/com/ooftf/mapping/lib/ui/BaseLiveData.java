@@ -228,11 +228,22 @@ public class BaseLiveData {
         return new BaseLiveDataObserve(this, fragment, fragment.getActivity());
     }
 
-    Map<Object, MutableLiveData<Integer>> singleMap = new HashMap<>();
+    private Map<Object, MutableLiveData<Integer>> singleMap = new HashMap<>();
+    private Map<Object, MutableLiveData<Integer>> multipleMap = new HashMap<>();
 
-    public void bindTag(@NotNull Object tag) {
+    public void singleLoading(@NotNull Object tag) {
         MutableLiveData<Integer> value = getSingleValue(tag);
-        value.setValue(UIEvent.Single.LOADING);
+        ThreadUtil.INSTANCE.runOnUiThread(() -> value.setValue(UIEvent.Single.LOADING));
+    }
+
+    public void singleSuccess(@NotNull Object tag) {
+        MutableLiveData<Integer> value = getSingleValue(tag);
+        ThreadUtil.INSTANCE.runOnUiThread(() -> value.setValue(UIEvent.Single.SUCCESS));
+    }
+
+    public void singleFail(@NotNull Object tag) {
+        MutableLiveData<Integer> value = getSingleValue(tag);
+        ThreadUtil.INSTANCE.runOnUiThread(() -> value.setValue(UIEvent.Single.FAIL));
     }
 
     @NonNull
@@ -240,9 +251,32 @@ public class BaseLiveData {
         MutableLiveData<Integer> data = singleMap.get(tag);
         if (data == null) {
             data = new MutableLiveData<>();
-            data.setValue(UIEvent.Single.NOMAL);
+            data.setValue(UIEvent.Single.SUCCESS);
             singleMap.put(tag, data);
         }
         return data;
     }
+
+
+    public void addMultiple(Object tag) {
+        MutableLiveData<Integer> value = getMultipleValue(tag);
+        ThreadUtil.INSTANCE.runOnUiThread(() -> value.setValue(value.getValue() + 1));
+    }
+
+    public void lessMultiple(Object tag) {
+        MutableLiveData<Integer> value = getMultipleValue(tag);
+        ThreadUtil.INSTANCE.runOnUiThread(() -> value.setValue(value.getValue() - 1));
+    }
+
+    @NonNull
+    public MutableLiveData<Integer> getMultipleValue(Object tag) {
+        MutableLiveData<Integer> data = multipleMap.get(tag);
+        if (data == null) {
+            data = new MutableLiveData<>();
+            data.setValue(0);
+            multipleMap.put(tag, data);
+        }
+        return data;
+    }
+
 }

@@ -17,20 +17,20 @@ import java.util.concurrent.TimeoutException
  * @email 994749769@qq.com
  * @date 2019/7/22 0022
  */
-open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
-    override fun getCall(): Call<*>? {
-        return mCall
-    }
+class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
 
-    fun setCall(call: Call<*>?) {
-        this.mCall = call
-    }
 
     private var baseLiveData: BaseLiveData? = null
     private var successData: MutableLiveData<T>? = null
     private var bindSmart = false
     private var bindDialog = false
     private var bindStateLayout = false
+    private val singleTags: MutableSet<Any> by lazy {
+        HashSet<Any>()
+    }
+    private val multipleTags: MutableSet<Any> by lazy {
+        HashSet<Any>()
+    }
 
     constructor() : super()
     constructor(baseLiveData: BaseLiveData) : super() {
@@ -46,6 +46,66 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
         this.successData = successData
     }
 
+    init {
+
+        doOnResponseCodeError { _, body ->
+            baseLiveData?.showMessage(body.msg)
+        }
+        doOnAnyFail {
+            baseLiveData?.let { baseLiveData ->
+                if (bindStateLayout) {
+                    baseLiveData.switchToError()
+                }
+                singleTags.forEach {
+                    baseLiveData.singleFail(it)
+                }
+                if (bindSmart) {
+                    baseLiveData.finishLoadMore()
+                    baseLiveData.finishRefresh()
+                }
+                if (bindDialog) {
+                    baseLiveData.dismissDialog(this)
+                }
+                multipleTags.forEach {
+                    baseLiveData.lessMultiple(it)
+                }
+
+            }
+
+        }
+        doOnResponseSuccess { call, body ->
+            baseLiveData?.let { baseLiveData ->
+                if (bindStateLayout) {
+                    baseLiveData.switchToSuccess()
+                }
+                singleTags.forEach {
+                    baseLiveData.singleSuccess(it)
+                }
+                if (bindSmart) {
+                    baseLiveData.finishLoadMoreSuccess()
+                    baseLiveData.finishRefresh()
+                }
+                if (bindDialog) {
+                    baseLiveData.dismissDialog(this)
+                }
+                multipleTags.forEach {
+                    baseLiveData.lessMultiple(it)
+                }
+            }
+            successData?.postValue(body)
+        }
+
+
+    }
+
+    override fun getCall(): Call<*>? {
+        return mCall
+    }
+
+    fun setCall(call: Call<*>?) {
+        this.mCall = call
+    }
+
     fun bindSmart(): LiveDataCallback<T> {
         baseLiveData?.startRefresh()
         bindSmart = true
@@ -58,8 +118,15 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
         return this
     }
 
-    fun bindTag(tag: Any): LiveDataCallback<T> {
-        baseLiveData.bindTag(this, tag)
+    fun bindSingle(tag: Any): LiveDataCallback<T> {
+        baseLiveData?.singleLoading(tag)
+        singleTags.add(tag)
+        return this
+    }
+
+    fun bindMultiple(tag: Any): LiveDataCallback<T> {
+        baseLiveData?.addMultiple(tag)
+        multipleTags.add(tag)
         return this
     }
 
@@ -74,19 +141,8 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) {
+        super.onFailure(call, t)
         t.printStackTrace()
-        if (bindDialog) {
-            baseLiveData?.dismissDialog(this)
-        }
-
-        if (bindSmart) {
-            baseLiveData?.finishLoadMore()
-            baseLiveData?.finishRefresh()
-        }
-
-        if (bindStateLayout) {
-            baseLiveData?.switchToError()
-        }
         var message: String = when (t) {
             is TimeoutException, is SocketTimeoutException -> "请求超时，请重试"
             is JSONException -> "数据异常，请重试"
@@ -106,66 +162,33 @@ open class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
 
     var mCall: Call<*>? = null
 
-    override fun onResponse(call: Call<T>, response: Response<T>) {
-        if (bindDialog) {
-            baseLiveData?.dismissDialog(this)
-        }
-        if (bindSmart) {
-            baseLiveData?.finishLoadMore()
-            baseLiveData?.finishRefresh()
-        }
-        super.onResponse(call, response)
-    }
 
-    override fun onResponseFailure(call: Call<T>, body: T) {
-        baseLiveData?.showMessage(body.msg)
-        if (bindStateLayout) {
-            baseLiveData?.switchToError()
-        }
-    }
-
-
-    override fun onResponseLoginStatusError(body: T) {
-        if (bindStateLayout) {
-            baseLiveData?.switchToError()
-        }
-        super.onResponseLoginStatusError(body)
-
-    }
-
-    override fun onResponseCodeError(call: Call<T>, response: Response<T>) {
-        if (bindStateLayout) {
-            baseLiveData?.switchToError()
-        }
+    override fun onHttpCodeError(call: Call<T>, response: Response<T>) {
+        super.onHttpCodeError(call, response)
         baseLiveData?.showMessage("出错了，请重试")
-        super.onResponseCodeError(call, response)
     }
 
-    override fun onResponseBodyNullError(call: Call<T>, response: Response<T>) {
-        if (bindStateLayout) {
-            baseLiveData?.switchToError()
-        }
+    override fun onResponseFailureBodyNull(call: Call<T>, response: Response<T>) {
+        super.onResponseFailureBodyNull(call, response)
         baseLiveData?.showMessage("出错了，请重试")
-        super.onResponseBodyNullError(call, response)
     }
 
-    @CallSuper
-    override fun onResponseSuccess(call: Call<T>, body: T) {
-        if (bindStateLayout) {
-            baseLiveData?.switchToSuccess()
-        }
-        if (bindSmart) {
-            baseLiveData?.finishLoadMoreSuccess()
-        }
-        successData?.postValue(body)
-        super.onResponseSuccess(call, body)
-    }
+
 
     override fun doOnResponse(doOnResponse: (call: Call<T>, response: Response<T>) -> Unit): LiveDataCallback<T> {
         return super.doOnResponse(doOnResponse) as LiveDataCallback
     }
 
-    override fun doOnResponseSuccess(doOnResponse: (call: Call<T>, response: T) -> Unit): LiveDataCallback<T> {
-        return super.doOnResponseSuccess(doOnResponse) as LiveDataCallback
+    override fun doOnResponseSuccess(doOnResponseSuccess: (call: Call<T>, body: T) -> Unit): LiveDataCallback<T> {
+        return super.doOnResponseSuccess(doOnResponseSuccess) as LiveDataCallback
     }
+
+    override fun doOnAnyFail(doOnAnyFail: (call: Call<T>) -> Unit): LiveDataCallback<T> {
+        return super.doOnAnyFail(doOnAnyFail) as LiveDataCallback<T>
+    }
+
+    override fun doOnResponseCodeError(doOnResponseCodeError: (call: Call<T>, body: T) -> Unit): LiveDataCallback<T> {
+        return super.doOnResponseCodeError(doOnResponseCodeError) as LiveDataCallback<T>
+    }
+
 }

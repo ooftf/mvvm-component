@@ -1,5 +1,6 @@
 package com.ooftf.mapping.lib
 
+import androidx.annotation.CallSuper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,58 +14,51 @@ import retrofit2.Response
  * @date 2019/7/22 0022
  */
 open class BaseCallback<T : BaseResponse> : Callback<T> {
-
+    @CallSuper
     override fun onResponse(call: Call<T>, response: Response<T>) {
         doOnResponseContainer.forEach {
             it.invoke(call, response)
         }
-        doOnResponseContainer.clear()
-
         if (response.code() != 200) {
-            onResponseCodeError(call, response)
+            doOnAnyFailContainer.forEach { it.invoke(call) }
+            onHttpCodeError(call, response)
             return
         }
         val body = response.body()
         if (body == null) {
-            onResponseBodyNullError(call, response)
+            doOnAnyFailContainer.forEach { it.invoke(call) }
+            onResponseFailureBodyNull(call, response)
             return
         }
 
         if (body.error == 0) {
-            onResponseSuccess(call, body)
+            doOnResponseSuccessContainer.forEach {
+                it.invoke(call, body)
+            }
         } else if (body.error == ERROR_TOKEN || body.error == ERROR_ACCOUNT || body.error == ERROR_ACCOUNT_NO) {
+            doOnAnyFailContainer.forEach { it.invoke(call) }
+            doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
             onResponseLoginStatusError(body)
         } else {
-            onResponseFailure(call, body)
+            doOnAnyFailContainer.forEach { it.invoke(call) }
+            doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
         }
     }
 
-    protected open fun onResponseCodeError(call: Call<T>, response: Response<T>) {
+
+    protected open fun onHttpCodeError(call: Call<T>, response: Response<T>) {}
+
+    protected open fun onResponseFailureBodyNull(call: Call<T>, response: Response<T>) {
 
     }
 
-    protected open fun onResponseBodyNullError(call: Call<T>, response: Response<T>) {
-
-    }
-
-
-    protected open fun onResponseFailure(call: Call<T>, body: T) {
-
-    }
 
     protected open fun onResponseLoginStatusError(body: T) {
         HttpUiMapping.getProvider().onTokenInvalid(body)
     }
-
-    protected open fun onResponseSuccess(call: Call<T>, body: T) {
-        doOnResponseSuccessContainer.forEach {
-            it.invoke(call, body)
-        }
-        doOnResponseSuccessContainer.clear()
-    }
-
+    @CallSuper
     override fun onFailure(call: Call<T>, t: Throwable) {
-
+        doOnAnyFailContainer.forEach { it.invoke(call) }
     }
 
     private val doOnResponseContainer = ArrayList<(call: Call<T>, response: Response<T>) -> Unit>()
@@ -74,10 +68,23 @@ open class BaseCallback<T : BaseResponse> : Callback<T> {
     }
 
     private val doOnResponseSuccessContainer = ArrayList<(call: Call<T>, response: T) -> Unit>()
-    open fun doOnResponseSuccess(doOnResponse: (call: Call<T>, response: T) -> Unit): BaseCallback<T> {
-        doOnResponseSuccessContainer.add(doOnResponse)
+    open fun doOnResponseSuccess(doOnResponseSuccess: (call: Call<T>, response: T) -> Unit): BaseCallback<T> {
+        doOnResponseSuccessContainer.add(doOnResponseSuccess)
         return this
     }
+
+    private val doOnAnyFailContainer = ArrayList<(call: Call<T>) -> Unit>()
+    open fun doOnAnyFail(doOnAnyFail: (call: Call<T>) -> Unit): BaseCallback<T> {
+        doOnAnyFailContainer.add(doOnAnyFail)
+        return this
+    }
+
+    private val doOnResponseCodeErrorContainer = ArrayList<(call: Call<T>, response: T) -> Unit>()
+    open fun doOnResponseCodeError(doOnResponseCodeError: (call: Call<T>, response: T) -> Unit): BaseCallback<T> {
+        doOnResponseCodeErrorContainer.add(doOnResponseCodeError)
+        return this
+    }
+
 
     companion object {
         const val ERROR_TOKEN = 100420
