@@ -19,11 +19,11 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
     constructor(liveData: BaseLiveData, fragment: Fragment) : this(liveData, fragment, fragment.activity!!)
 
     private val loadingDialog by lazy {
-        var dialog = HttpUiMapping.getProvider().createLoadingDialog(activity);
+        var dialog = HttpUiMapping.getProvider().createLoadingDialog(activity)
         dialog.setOnCancelListener {
             (dialog.window.decorView.tag)?.let {
                 (it as List<CallOwner>).forEach { item ->
-                    item?.getCall()?.cancel()
+                    item.getCall()?.cancel()
                 }
             }
         }
@@ -50,9 +50,11 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
 
         liveData.finishWithData.observe(owner, Observer {
             var intent = Intent()
-            intent.putExtra("data",it.data)
+            intent.putExtra(DEFAULT_RESULT_DATA,it.data)
             activity.setResult(it.code,intent)
-            activity.finish()
+            if(it.isFinish){
+                activity.finish()
+            }
         })
         setSmartObserve()
     }
@@ -69,11 +71,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
                     it.finishRefresh()
                     it.resetNoMoreData()
                 }
-            } /*else if (isSmartsNone()) {
-                smarts.forEach {
-                    it.autoRefreshAnimationOnly()
-                }
-            }*/
+            }
         })
 
         liveData.smartLoadMore.observe(owner, Observer { integer ->
@@ -87,6 +85,10 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
                 }
             }
         })
+    }
+
+    companion object{
+        const val DEFAULT_RESULT_DATA = "data"
     }
 
 }

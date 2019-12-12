@@ -1,6 +1,5 @@
 package com.ooftf.mapping.lib
 
-import androidx.annotation.CallSuper
 import androidx.lifecycle.MutableLiveData
 import com.ooftf.mapping.lib.ui.BaseLiveData
 import com.ooftf.mapping.lib.ui.CallOwner
@@ -172,7 +171,6 @@ class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
         super.onResponseFailureBodyNull(call, response)
         baseLiveData?.showMessage("出错了，请重试")
     }
-
 
 
     override fun doOnResponse(doOnResponse: (call: Call<T>, response: Response<T>) -> Unit): LiveDataCallback<T> {
