@@ -8,6 +8,6 @@ import android.os.Bundle
  * @email 994749769@qq.com
  * @date 2019/8/20 0020
  */
-class FinishData(var code:Int,var data:Bundle) {
+class FinishData(var code: Int, var data: Bundle, var isFinish: Boolean = true) {
 
 }
