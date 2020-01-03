@@ -22,7 +22,7 @@ public class HttpUiMapping {
     }
 
     public interface provider {
-        void onTokenInvalid(BaseResponse baseResponse);
+        void onTokenInvalid(IResponse baseResponse);
 
         MyDialogInterface createLoadingDialog(Activity activity);
 

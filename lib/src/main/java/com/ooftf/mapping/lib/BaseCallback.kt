@@ -13,7 +13,7 @@ import retrofit2.Response
  * @email 994749769@qq.com
  * @date 2019/7/22 0022
  */
-open class BaseCallback<T : BaseResponse> : Callback<T> {
+open class BaseCallback<T : IResponse> : Callback<T> {
     @CallSuper
     override fun onResponse(call: Call<T>, response: Response<T>) {
         doOnResponseContainer.forEach {
@@ -31,17 +31,21 @@ open class BaseCallback<T : BaseResponse> : Callback<T> {
             return
         }
 
-        if (body.error == 0) {
-            doOnResponseSuccessContainer.forEach {
-                it.invoke(call, body)
+        when {
+            body.isSucess() -> {
+                doOnResponseSuccessContainer.forEach {
+                    it.invoke(call, body)
+                }
             }
-        } else if (body.error == ERROR_TOKEN || body.error == ERROR_ACCOUNT || body.error == ERROR_ACCOUNT_NO) {
-            doOnAnyFailContainer.forEach { it.invoke(call) }
-            doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
-            onResponseLoginStatusError(body)
-        } else {
-            doOnAnyFailContainer.forEach { it.invoke(call) }
-            doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
+            body.isTokenError() -> {
+                doOnAnyFailContainer.forEach { it.invoke(call) }
+                doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
+                onResponseLoginStatusError(body)
+            }
+            else -> {
+                doOnAnyFailContainer.forEach { it.invoke(call) }
+                doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
+            }
         }
     }
 

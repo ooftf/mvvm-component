@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException
  * @email 994749769@qq.com
  * @date 2019/7/22 0022
  */
-class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
+class LiveDataCallback<T : IResponse> : BaseCallback<T>, CallOwner {
 
 
     private var baseLiveData: BaseLiveData? = null
@@ -48,7 +48,7 @@ class LiveDataCallback<T : BaseResponse> : BaseCallback<T>, CallOwner {
     init {
 
         doOnResponseCodeError { _, body ->
-            baseLiveData?.showMessage(body.msg)
+            baseLiveData?.showMessage(body.getMessage())
         }
         doOnAnyFail {
             baseLiveData?.let { baseLiveData ->
