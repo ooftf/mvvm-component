@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.ooftf.mapping.lib.HttpUiMapping
+import com.ooftf.mapping.lib.LogUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
+import com.scwang.smartrefresh.layout.constant.RefreshState
 
 /**
  * @author ooftf
@@ -50,9 +52,9 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
 
         liveData.finishWithData.observe(owner, Observer {
             var intent = Intent()
-            intent.putExtra(DEFAULT_RESULT_DATA,it.data)
-            activity.setResult(it.code,intent)
-            if(it.isFinish){
+            intent.putExtra(DEFAULT_RESULT_DATA, it.data)
+            activity.setResult(it.code, intent)
+            if (it.isFinish) {
                 activity.finish()
             }
         })
@@ -68,8 +70,12 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
         liveData.smartRefresh.observe(owner, Observer { integer ->
             if (integer == 0) {
                 smarts.forEach {
-                    it.finishRefresh()
-                    it.resetNoMoreData()
+                    if (it.state == RefreshState.Refreshing) {
+                        it.finishRefresh()
+                        LogUtil.e("finishRefresh  ok")
+                    } else {
+                        LogUtil.e("finishRefresh  no")
+                    }
                 }
             }
         })
@@ -87,7 +93,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
         })
     }
 
-    companion object{
+    companion object {
         const val DEFAULT_RESULT_DATA = "data"
     }
 
