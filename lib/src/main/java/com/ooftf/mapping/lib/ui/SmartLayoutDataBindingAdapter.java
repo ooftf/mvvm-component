@@ -16,7 +16,7 @@ public class SmartLayoutDataBindingAdapter {
     public static void setRefreshState(SmartRefreshLayout smartRefreshLayout, int state) {
         if (state == 0) {
             if(smartRefreshLayout.getState() == RefreshState.Refreshing){
-                smartRefreshLayout.finishRefresh();
+                smartRefreshLayout.finishRefresh(0,true,null);
                 LogUtil.e("finishRefresh  ok");
             }else{
                 LogUtil.e("finishRefresh  no");

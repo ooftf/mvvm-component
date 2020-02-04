@@ -16,37 +16,42 @@ import retrofit2.Response
 open class BaseCallback<T : IResponse> : Callback<T> {
     @CallSuper
     override fun onResponse(call: Call<T>, response: Response<T>) {
-        doOnResponseContainer.forEach {
-            it.invoke(call, response)
-        }
-        if (response.code() != 200) {
-            doOnAnyFailContainer.forEach { it.invoke(call) }
-            onHttpCodeError(call, response)
-            return
-        }
-        val body = response.body()
-        if (body == null) {
-            doOnAnyFailContainer.forEach { it.invoke(call) }
-            onResponseFailureBodyNull(call, response)
-            return
-        }
+        try {
+            doOnResponseContainer.forEach {
+                it.invoke(call, response)
+            }
+            if (response.code() != 200) {
+                doOnAnyFailContainer.forEach { it.invoke(call) }
+                onHttpCodeError(call, response)
+                return
+            }
+            val body = response.body()
+            if (body == null) {
+                doOnAnyFailContainer.forEach { it.invoke(call) }
+                onResponseFailureBodyNull(call, response)
+                return
+            }
 
-        when {
-            body.isSucess() -> {
-                doOnResponseSuccessContainer.forEach {
-                    it.invoke(call, body)
+            when {
+                body.isSuccess() -> {
+                    doOnResponseSuccessContainer.forEach {
+                        it.invoke(call, body)
+                    }
+                }
+                body.isTokenError() -> {
+                    doOnAnyFailContainer.forEach { it.invoke(call) }
+                    doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
+                    onResponseLoginStatusError(body)
+                }
+                else -> {
+                    doOnAnyFailContainer.forEach { it.invoke(call) }
+                    doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
                 }
             }
-            body.isTokenError() -> {
-                doOnAnyFailContainer.forEach { it.invoke(call) }
-                doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
-                onResponseLoginStatusError(body)
-            }
-            else -> {
-                doOnAnyFailContainer.forEach { it.invoke(call) }
-                doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
-            }
+        } catch (t: Throwable) {
+            onFailure(call,t)
         }
+
     }
 
 
@@ -87,12 +92,5 @@ open class BaseCallback<T : IResponse> : Callback<T> {
     open fun doOnResponseCodeError(doOnResponseCodeError: (call: Call<T>, response: T) -> Unit): BaseCallback<T> {
         doOnResponseCodeErrorContainer.add(doOnResponseCodeError)
         return this
-    }
-
-
-    companion object {
-        const val ERROR_TOKEN = 100420
-        const val ERROR_ACCOUNT = 100463
-        const val ERROR_ACCOUNT_NO = 100405
     }
 }

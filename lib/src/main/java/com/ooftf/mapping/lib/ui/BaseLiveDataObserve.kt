@@ -71,7 +71,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
             if (integer == 0) {
                 smarts.forEach {
                     if (it.state == RefreshState.Refreshing) {
-                        it.finishRefresh()
+                        it.finishRefresh(0,true,null)
                         LogUtil.e("finishRefresh  ok")
                     } else {
                         LogUtil.e("finishRefresh  no")

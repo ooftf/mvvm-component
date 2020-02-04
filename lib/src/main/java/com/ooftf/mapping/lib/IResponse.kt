@@ -11,6 +11,6 @@ interface IResponse {
     var msg: String = ""*/
 
     fun isTokenError(): Boolean
-    fun isSucess(): Boolean
+    fun isSuccess(): Boolean
     fun getMessage(): String
 }
