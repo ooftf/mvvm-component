@@ -27,9 +27,11 @@ public class SmartLayoutDataBindingAdapter {
     @BindingAdapter(value = "loadMoreState", requireAll = false)
     public static void setLoadMoreState(SmartRefreshLayout smartRefreshLayout, int state) {
         if (state == UIEvent.SMART_LAYOUT_LOADMORE_FINISH) {
+            smartRefreshLayout.resetNoMoreData();
             smartRefreshLayout.finishLoadMore();
             LogUtil.e("finishLoadMore");
         } else if (state == UIEvent.SMART_LAYOUT_LOADMORE_FINISH_SUCCESS) {
+            smartRefreshLayout.resetNoMoreData();
             smartRefreshLayout.finishLoadMore();
             LogUtil.e("finishLoadMoreSuccess");
         } else if (state == UIEvent.SMART_LAYOUT_LOADMORE_FINISH_AND_NO_MORE) {

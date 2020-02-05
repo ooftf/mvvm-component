@@ -83,6 +83,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
         liveData.smartLoadMore.observe(owner, Observer { integer ->
             if (integer == UIEvent.SMART_LAYOUT_LOADMORE_FINISH) {
                 smarts.forEach {
+                    it.resetNoMoreData()
                     it.finishLoadMore()
                 }
             } else if (integer == UIEvent.SMART_LAYOUT_LOADMORE_FINISH_AND_NO_MORE) {
