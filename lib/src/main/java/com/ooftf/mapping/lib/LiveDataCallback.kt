@@ -181,6 +181,10 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, CallOwner {
         return super.doOnResponseSuccess(doOnResponseSuccess) as LiveDataCallback
     }
 
+    override fun doOnResponseSuccessHeader(doOnResponseSuccess: (call: Call<T>, response: T) -> Unit): LiveDataCallback<T> {
+        return super.doOnResponseSuccessHeader(doOnResponseSuccess) as LiveDataCallback
+    }
+
     override fun doOnAnyFail(doOnAnyFail: (call: Call<T>) -> Unit): LiveDataCallback<T> {
         return super.doOnAnyFail(doOnAnyFail) as LiveDataCallback<T>
     }

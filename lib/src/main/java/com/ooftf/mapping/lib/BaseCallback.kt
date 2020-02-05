@@ -49,7 +49,7 @@ open class BaseCallback<T : IResponse> : Callback<T> {
                 }
             }
         } catch (t: Throwable) {
-            onFailure(call,t)
+            onFailure(call, t)
         }
 
     }
@@ -81,6 +81,12 @@ open class BaseCallback<T : IResponse> : Callback<T> {
         doOnResponseSuccessContainer.add(doOnResponseSuccess)
         return this
     }
+
+    open fun doOnResponseSuccessHeader(doOnResponseSuccess: (call: Call<T>, response: T) -> Unit): BaseCallback<T> {
+        doOnResponseSuccessContainer.add(0, doOnResponseSuccess)
+        return this
+    }
+
 
     private val doOnAnyFailContainer = ArrayList<(call: Call<T>) -> Unit>()
     open fun doOnAnyFail(doOnAnyFail: (call: Call<T>) -> Unit): BaseCallback<T> {
