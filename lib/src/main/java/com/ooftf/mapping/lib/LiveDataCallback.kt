@@ -2,7 +2,7 @@ package com.ooftf.mapping.lib
 
 import androidx.lifecycle.MutableLiveData
 import com.ooftf.mapping.lib.ui.BaseLiveData
-import com.ooftf.mapping.lib.ui.CallOwner
+import com.ooftf.mapping.lib.ui.Cancelable
 import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Response
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException
  * @email 994749769@qq.com
  * @date 2019/7/22 0022
  */
-class LiveDataCallback<T : IResponse> : BaseCallback<T>, CallOwner {
+class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
 
 
     private var baseLiveData: BaseLiveData? = null
@@ -97,8 +97,8 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, CallOwner {
 
     }
 
-    override fun getCall(): Call<*>? {
-        return mCall
+    override fun cancel() {
+        mCall?.cancel()
     }
 
     fun setCall(call: Call<*>?) {
@@ -111,7 +111,7 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, CallOwner {
         return this
     }
 
-    fun bindDialog(call: CallOwner): LiveDataCallback<T> {
+    fun bindDialog(call: Cancelable): LiveDataCallback<T> {
         baseLiveData?.showDialog(call)
         bindDialog = true
         return this
@@ -192,5 +192,6 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, CallOwner {
     override fun doOnResponseCodeError(doOnResponseCodeError: (call: Call<T>, body: T) -> Unit): LiveDataCallback<T> {
         return super.doOnResponseCodeError(doOnResponseCodeError) as LiveDataCallback<T>
     }
+
 
 }

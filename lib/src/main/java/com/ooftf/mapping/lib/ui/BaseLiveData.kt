@@ -38,7 +38,7 @@ class BaseLiveData {
     /**
      * showLoading
      */
-    val showLoading by lazy {MutableLiveData<MutableList<CallOwner>>()}
+    val showLoading by lazy {MutableLiveData<MutableList<Cancelable>>()}
     val smartRefresh by lazy { MutableLiveData<Int>() }
     val smartLoadMore by lazy { MutableLiveData<Int>() }
     val stateLayout  by lazy { MutableLiveData<Int>()}
@@ -85,11 +85,11 @@ class BaseLiveData {
     /**
      * showDialog
      */
-    fun showDialog(call: CallOwner) {
+    fun showDialog(call: Cancelable) {
         runOnUiThread(Runnable {
             var value = showLoading.value
             if (value == null) {
-                value = ArrayList<CallOwner>()
+                value = ArrayList<Cancelable>()
                 value.add(call)
             } else {
                 value.add(call)
@@ -101,7 +101,7 @@ class BaseLiveData {
     /**
      * dismissDialog
      */
-    fun dismissDialog(call: CallOwner?) {
+    fun dismissDialog(call: Cancelable?) {
         runOnUiThread(Runnable {
             var value = showLoading.value
             if (value == null) {

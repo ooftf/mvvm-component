@@ -1,6 +1,7 @@
 package com.ooftf.mapping.lib.ui
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -21,14 +22,14 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
     constructor(liveData: BaseLiveData, fragment: Fragment) : this(liveData, fragment, fragment.activity!!)
 
     private val loadingDialog by lazy {
-        var dialog = HttpUiMapping.getProvider().createLoadingDialog(activity)
-        dialog.setOnCancelListener {
-            (dialog.window.decorView.tag)?.let {
-                (it as List<CallOwner>).forEach { item ->
-                    item.getCall()?.cancel()
+        var dialog = HttpUiMapping.provider.createLoadingDialog(activity)
+        dialog.setOnCancelListener(DialogInterface.OnCancelListener {
+            (dialog.getWindow().decorView.tag)?.let {
+                (it as List<Cancelable>).forEach { item ->
+                    item.cancel()
                 }
             }
-        }
+        })
         dialog
     }
     private val smarts = ArrayList<SmartRefreshLayout>()
@@ -39,7 +40,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
             activity.finish()
         })
         liveData.showLoading.observe(owner, Observer { calls ->
-            loadingDialog.window?.decorView?.tag = calls
+            loadingDialog.getWindow()?.decorView?.tag = calls
             if (calls.size > 0) {
                 loadingDialog.show()
             } else {
@@ -47,7 +48,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
             }
         })
         liveData.startActivityLiveData.observe(owner, Observer { postcard -> postcard.navigation(activity) })
-        liveData.messageLiveData.observe(owner, Observer<String> { HttpUiMapping.getProvider().toast(it) })
+        liveData.messageLiveData.observe(owner, Observer<String> { HttpUiMapping.provider.toast(it) })
 
 
         liveData.finishWithData.observe(owner, Observer {
@@ -71,7 +72,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
             if (integer == 0) {
                 smarts.forEach {
                     if (it.state == RefreshState.Refreshing) {
-                        it.finishRefresh(0,true,null)
+                        it.finishRefresh(0, true, null)
                         LogUtil.e("finishRefresh  ok")
                     } else {
                         LogUtil.e("finishRefresh  no")

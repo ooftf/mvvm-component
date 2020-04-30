@@ -9,6 +9,6 @@ import retrofit2.Call
  * @email 994749769@qq.com
  * @date 2019/10/25
  */
-interface CallOwner {
-    fun getCall(): Call<*>?
+interface Cancelable {
+    fun cancel()
 }

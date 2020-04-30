@@ -62,7 +62,7 @@ open class BaseCallback<T : IResponse> : Callback<T> {
     }
 
     protected open fun onResponseLoginStatusError(body: T) {
-        HttpUiMapping.getProvider().onTokenInvalid(body)
+        HttpUiMapping.provider.onTokenInvalid(body)
     }
 
     @CallSuper
