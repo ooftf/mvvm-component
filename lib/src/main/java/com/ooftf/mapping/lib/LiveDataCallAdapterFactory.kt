@@ -3,7 +3,10 @@ package com.ooftf.mapping.lib
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import retrofit2.*
+import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.CallAdapter
+import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
@@ -55,20 +58,18 @@ class LiveDataCallAdapterFactory : CallAdapter.Factory() {
         override fun adapt(call: Call<T>): LiveDataOperator<T> {
             val result = LiveDataOperator<T>()
             result.liveDataCallback.setCall(call)
-            call.enqueue(object : Callback<T> {
-                override fun onFailure(call: Call<T>, t: Throwable) {
-                    GlobalScope.launch(Dispatchers.Main) {
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val response = call.execute()
+                    withContext(Dispatchers.Main) {
+                        result.liveDataCallback.onResponse(call, response)
+                    }
+                } catch (t: Throwable) {
+                    withContext(Dispatchers.Main) {
                         result.liveDataCallback.onFailure(call, t)
                     }
                 }
-
-                override fun onResponse(call: Call<T>, response: Response<T>) {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        result.liveDataCallback.onResponse(call, response)
-                    }
-                }
-            })
-
+            }
             return result
         }
     }

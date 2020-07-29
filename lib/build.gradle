@@ -40,7 +40,7 @@ publish {
     userOrg = 'ooftf'      // bintray注册的用户名
     groupId = 'com.ooftf'
     artifactId = 'http-ui-mapping' // bintray创建的package
-    publishVersion = '1.1.9'
+    publishVersion = '1.2.0'
     desc = 'nothing'
     bintrayUser = 'ooftf'
     bintrayKey = LocalBintrayKey()
@@ -61,8 +61,8 @@ dependencies {
     api 'com.ooftf:master-widget-statelayout:1.1.0'
     api 'com.squareup.okhttp3:okhttp:4.2.2'
     implementation "com.squareup.retrofit2:retrofit:2.6.0"
-    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
-    api "com.scwang.smartrefresh:SmartRefreshHeader:1.1.0"
+    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.2'
+    api "com.scwang.smartrefresh:SmartRefreshHeader:1.1.2"
     api 'com.alibaba:arouter-api:1.5.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3"

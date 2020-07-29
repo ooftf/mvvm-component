@@ -4,6 +4,7 @@ import com.ooftf.mapping.lib.ui.BaseLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.*
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -55,20 +56,18 @@ class BaseCallAdapterFactory : CallAdapter.Factory() {
 
         override fun adapt(call: Call<T>): BaseCallback<T> {
             val result = BaseCallback<T>()
-            call.enqueue(object : Callback<T> {
-                override fun onFailure(call: Call<T>, t: Throwable) {
-                    GlobalScope.launch(Dispatchers.Main) {
+            GlobalScope.launch (Dispatchers.IO){
+                try {
+                    val response = call.execute()
+                    withContext(Dispatchers.Main){
+                        result.onResponse(call,  response)
+                    }
+                } catch (t: Throwable) {
+                    withContext(Dispatchers.Main){
                         result.onFailure(call, t)
                     }
                 }
-
-                override fun onResponse(call: Call<T>, response: Response<T>) {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        result.onResponse(call, response)
-                    }
-                }
-            })
-
+            }
             return result
         }
     }
