@@ -26,7 +26,11 @@ object HttpUiMapping {
         println("" + (integer == 0))
     }
 
-    fun <T:Any> proxyService(service: T): T {
+    /**
+     * 如果使用 LiveDataCallAdapterFactory 可以不用这一步，使用了也不会出错
+     */
+
+    fun <T : Any> proxyService(service: T): T {
         val t = service::class.java.interfaces.first()
         val proxyService = Proxy.newProxyInstance(
                 t.classLoader,

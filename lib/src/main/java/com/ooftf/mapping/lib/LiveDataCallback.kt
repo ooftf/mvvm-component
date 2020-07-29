@@ -101,6 +101,11 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
         mCall?.cancel()
     }
 
+    fun setLiveData(value: BaseLiveData): LiveDataCallback<T> {
+        baseLiveData = value
+        return this
+    }
+
     fun setCall(call: Call<*>?) {
         this.mCall = call
     }
