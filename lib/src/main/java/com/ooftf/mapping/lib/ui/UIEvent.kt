@@ -1,5 +1,7 @@
 package com.ooftf.mapping.lib.ui
 
+import com.ooftf.widget.statelayout.IStateLayout
+
 /**
  *
  * @author ooftf
@@ -23,11 +25,9 @@ object UIEvent {
     const val SMART_LAYOUT_LOADMORE_FINISH_AND_NO_MORE = 2
 
 
-
-
-    object Single{
-        const val LOADING = 1
-        const val SUCCESS = 2
-        const val FAIL = 3
+    object Single {
+        const val LOADING = IStateLayout.STATE_LOAD
+        const val SUCCESS = IStateLayout.STATE_SUCCESS
+        const val FAIL = IStateLayout.STATE_ERROR
     }
 }
