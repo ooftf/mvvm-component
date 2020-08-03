@@ -25,7 +25,7 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
         var dialog = HttpUiMapping.provider.createLoadingDialog(activity)
         dialog.setOnCancelListener(DialogInterface.OnCancelListener {
             (dialog.getWindow().decorView.tag)?.let {
-                (it as List<Cancelable>).forEach { item ->
+                (it as? List<Cancelable>)?.forEach { item ->
                     item.cancel()
                 }
             }
