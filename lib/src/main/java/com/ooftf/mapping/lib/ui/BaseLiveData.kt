@@ -8,8 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import com.alibaba.android.arouter.facade.Postcard
 import com.ooftf.mapping.lib.LogUtil
 import com.ooftf.mapping.lib.LostMutableLiveData
-import com.ooftf.mapping.lib.ThreadUtil.runOnUiThread
 import com.ooftf.widget.statelayout.IStateLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -86,7 +88,7 @@ class BaseLiveData {
      * showDialog
      */
     fun showDialog(call: Cancelable) {
-        runOnUiThread(Runnable {
+        GlobalScope.launch (Dispatchers.Main){
             var value = showLoading.value
             if (value == null) {
                 value = ArrayList<Cancelable>()
@@ -95,14 +97,14 @@ class BaseLiveData {
                 value.add(call)
             }
             showLoading.setValue(value)
-        })
+        }
     }
 
     /**
      * dismissDialog
      */
     fun dismissDialog(call: Cancelable?) {
-        runOnUiThread(Runnable {
+        GlobalScope.launch (Dispatchers.Main) {
             var value = showLoading.value
             if (value == null) {
                 value = ArrayList()
@@ -110,7 +112,7 @@ class BaseLiveData {
                 value.remove(call)
             }
             showLoading.setValue(value)
-        })
+        }
     }
 
     val isSmartLoading: Boolean
@@ -130,24 +132,24 @@ class BaseLiveData {
     }
 
     fun startRefresh() {
-        runOnUiThread(Runnable {
+        GlobalScope.launch (Dispatchers.Main) {
             if (smartRefresh.value == null) {
                 smartRefresh.setValue(1)
             } else {
                 smartRefresh.setValue(smartRefresh.value!! + 1)
             }
-        })
+        }
     }
 
     fun finishRefresh() {
         LogUtil.e("postFinishRefresh")
-        runOnUiThread(Runnable {
+        GlobalScope.launch (Dispatchers.Main) {
             if (smartRefresh.value == null) {
                 smartRefresh.setValue(0)
             } else {
                 smartRefresh.setValue(smartRefresh.value!! - 1)
             }
-        })
+        }
     }
 
     fun finishLoadMore() {
@@ -167,22 +169,22 @@ class BaseLiveData {
 
     fun switchToEmpty() {
         LogUtil.e("postSwitchToEmpty")
-        runOnUiThread(Runnable { stateLayout.setValue(IStateLayout.STATE_EMPTY) })
+        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_EMPTY) }
     }
 
     fun switchToLoading() {
         LogUtil.e("postSwitchToLoading")
-        runOnUiThread(Runnable { stateLayout.setValue(IStateLayout.STATE_LOAD) })
+        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_LOAD) }
     }
 
     fun switchToError() {
         LogUtil.e("postSwitchToError")
-        runOnUiThread(Runnable { stateLayout.setValue(IStateLayout.STATE_ERROR) })
+        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_ERROR) }
     }
 
     fun switchToSuccess() {
         LogUtil.e("postSwitchToSuccess")
-        runOnUiThread(Runnable { stateLayout.setValue(IStateLayout.STATE_SUCCESS) })
+        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_SUCCESS) }
     }
 
     fun attach(owner: LifecycleOwner, activity: Activity): BaseLiveDataObserve {
@@ -201,17 +203,17 @@ class BaseLiveData {
     private val multipleMap: MutableMap<Any, MutableLiveData<Int>> = HashMap()
     fun singleLoading(tag: Any) {
         val value = getSingleValue(tag)
-        runOnUiThread(Runnable { value.setValue(UIEvent.Single.LOADING) })
+        GlobalScope.launch (Dispatchers.Main) { value.setValue(UIEvent.Single.LOADING) }
     }
 
     fun singleSuccess(tag: Any) {
         val value = getSingleValue(tag)
-        runOnUiThread(Runnable { value.setValue(UIEvent.Single.SUCCESS) })
+        GlobalScope.launch (Dispatchers.Main) { value.setValue(UIEvent.Single.SUCCESS) }
     }
 
     fun singleFail(tag: Any) {
         val value = getSingleValue(tag)
-        runOnUiThread(Runnable { value.setValue(UIEvent.Single.FAIL) })
+        GlobalScope.launch (Dispatchers.Main) { value.setValue(UIEvent.Single.FAIL) }
     }
 
     fun getSingleValue(tag: Any): MutableLiveData<Int> {
@@ -226,12 +228,12 @@ class BaseLiveData {
 
     fun addMultiple(tag: Any) {
         val value = getMultipleValue(tag)
-        runOnUiThread(Runnable { value.setValue(value.value!! + 1) })
+        GlobalScope.launch (Dispatchers.Main) { value.setValue(value.value!! + 1) }
     }
 
     fun lessMultiple(tag: Any) {
         val value = getMultipleValue(tag)
-        runOnUiThread(Runnable { value.setValue(value.value!! - 1) })
+        GlobalScope.launch (Dispatchers.Main) { value.setValue(value.value!! - 1) }
     }
 
     fun getMultipleValue(tag: Any): MutableLiveData<Int> {
