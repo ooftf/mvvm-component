@@ -14,7 +14,7 @@ import com.scwang.smartrefresh.layout.constant.RefreshState
  */
 object SmartLayoutDataBindingAdapter {
     @BindingAdapter(value = ["refreshState"], requireAll = false)
-    fun setRefreshState(smartRefreshLayout: SmartRefreshLayout, state: Int) {
+    fun setRefreshState(smartRefreshLayout: SmartRefreshLayout, state: Int?) {
         if (state == 0) {
             if (smartRefreshLayout.state == RefreshState.Refreshing) {
                 smartRefreshLayout.finishRefresh(0, true, null)
@@ -26,7 +26,7 @@ object SmartLayoutDataBindingAdapter {
     }
 
     @BindingAdapter(value = ["loadMoreState"], requireAll = false)
-    fun setLoadMoreState(smartRefreshLayout: SmartRefreshLayout, state: Int) {
+    fun setLoadMoreState(smartRefreshLayout: SmartRefreshLayout, state: Int?) {
         if (state == UIEvent.SMART_LAYOUT_LOADMORE_FINISH) {
             smartRefreshLayout.resetNoMoreData()
             smartRefreshLayout.finishLoadMore()
