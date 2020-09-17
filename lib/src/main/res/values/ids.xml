@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="observer_refresh" type="id" />
+    <item name="observer_more" type="id" />
+    <item name="observer_state" type="id" />
+</resources>

@@ -3,6 +3,7 @@ package com.ooftf.mapping.lib.ui
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.Observer
 import com.ooftf.mapping.lib.LogUtil.e
+import com.ooftf.mapping.lib.R
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.scwang.smartrefresh.layout.constant.RefreshState
@@ -13,6 +14,7 @@ import com.scwang.smartrefresh.layout.constant.RefreshState
  * @date 2019/10/15
  */
 object SmartLayoutDataBindingAdapter {
+    @JvmStatic
     @BindingAdapter(value = ["refreshState"], requireAll = false)
     fun setRefreshState(smartRefreshLayout: SmartRefreshLayout, state: Int?) {
         if (state == 0) {
@@ -24,7 +26,7 @@ object SmartLayoutDataBindingAdapter {
             }
         }
     }
-
+    @JvmStatic
     @BindingAdapter(value = ["loadMoreState"], requireAll = false)
     fun setLoadMoreState(smartRefreshLayout: SmartRefreshLayout, state: Int?) {
         if (state == UIEvent.SMART_LAYOUT_LOADMORE_FINISH) {
@@ -40,7 +42,7 @@ object SmartLayoutDataBindingAdapter {
             e("finishLoadMoreWithNoMoreData")
         }
     }
-
+    @JvmStatic
     @BindingAdapter(value = ["loadMoreListener"], requireAll = false)
     fun setOnLoadMoreListener(smartRefreshLayout: SmartRefreshLayout, f: Runnable?) {
         if (f == null) {
@@ -55,7 +57,7 @@ object SmartLayoutDataBindingAdapter {
             }
         }
     }
-
+    @JvmStatic
     @BindingAdapter(value = ["refreshListener"], requireAll = false)
     fun setOnRefreshListener(smartRefreshLayout: SmartRefreshLayout, f: Runnable?) {
         if (f == null) {
@@ -69,13 +71,12 @@ object SmartLayoutDataBindingAdapter {
             }
         }
     }
-
+    @JvmStatic
     @BindingAdapter(value = ["data"], requireAll = false)
     fun setUiMapping(smartRefreshLayout: SmartRefreshLayout, data: ISmartLayoutData?) {
         if (data == null) {
             return
         }
-        e("setOnLoadMoreListener")
         smartRefreshLayout.setOnLoadMoreListener { refreshLayout: RefreshLayout? ->
             try {
                 data.nextPage()
@@ -90,11 +91,26 @@ object SmartLayoutDataBindingAdapter {
                 e.printStackTrace()
             }
         }
-
-        data.getLifecycleOwner()?.let {
-            data.getLoadMoreState().observe(data.getLifecycleOwner()!!, Observer { integer: Int -> setLoadMoreState(smartRefreshLayout, integer) })
-            data.getRefreshState().observe(data.getLifecycleOwner()!!, Observer { integer: Int -> setRefreshState(smartRefreshLayout, integer) })
+        var observerFresh = smartRefreshLayout.getTag(R.id.observer_refresh)
+        var observerMore = smartRefreshLayout.getTag(R.id.observer_more)
+        if (observerFresh == null) {
+            observerFresh = Observer<Int> { integer: Int ->
+                setRefreshState(smartRefreshLayout, integer)
+            }
+            smartRefreshLayout.setTag(R.id.observer_refresh, observerFresh)
+            data.getLifecycleOwner()?.let {
+                data.getRefreshState().observe(it, observerFresh)
+            }
         }
+        if (observerMore == null) {
+            observerMore = Observer<Int> { integer: Int ->
+                setLoadMoreState(smartRefreshLayout, integer)
+            }
+            smartRefreshLayout.setTag(R.id.observer_more, observerMore)
+            data.getLifecycleOwner()?.let {
+                data.getLoadMoreState().observe(it, observerMore)
 
+            }
+        }
     }
 }
