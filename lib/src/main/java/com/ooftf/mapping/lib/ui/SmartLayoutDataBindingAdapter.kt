@@ -84,7 +84,7 @@ object SmartLayoutDataBindingAdapter {
                 e.printStackTrace()
             }
         }
-        smartRefreshLayout.setOnLoadMoreListener { refreshLayout: RefreshLayout? ->
+        smartRefreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout? ->
             try {
                 data.refresh()
             } catch (e: Exception) {
