@@ -1,6 +1,4 @@
 package com.ooftf.mapping.lib
-
-import com.ooftf.mapping.lib.ui.BaseLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,7 +25,7 @@ class BaseCallAdapterFactory : CallAdapter.Factory() {
             annotations: Array<Annotation>,
             retrofit: Retrofit
     ): CallAdapter<*, *>? {
-        if (BaseLiveData::class.java != getRawType(returnType)) {
+        if (BaseCallback::class.java != getRawType(returnType)) {
             return null
         }
         if (returnType !is ParameterizedType) {
