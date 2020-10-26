@@ -59,37 +59,12 @@ object StateLayoutDataBindingAdapter {
         if (data == null) {
             return
         }
-        val slsView =
-                if (view.parent is StateLayoutSwitcher) {
-                    view.parent as StateLayoutSwitcher
-                } else {
-                    StateLayoutSwitcher(view.context).apply {
-                        setSuccessLayout(view)
-                        emptyLayoutId?.let { setEmptyLayoutId(it) }
-                        loadLayoutId?.let { setLoadLayoutId(it) }
-                        errorLayoutId?.let { setErrorLayoutId(it) }
-                        firstLayoutId?.let { setFirstLayoutId(it) }
-                        secondLayoutId?.let { setSecondLayoutId(it) }
-                        thirdLayoutId?.let { setThirdLayoutId(it) }
-
-                        emptyActionId?.let { setEmptyActionId(it) }
-                        errorActionId?.let { setRefreshActionId(it) }
-                        firstActionId?.let { setFirstActionId(it) }
-                        secondActionId?.let { setSecondActionId(it) }
-                        thirdActionId?.let { setThirdActionId(it) }
-                        setOnRetryListener {
-                            data.refresh()
-                        }
-                        setEmptyAction {
-                            data.emptyAction()
-                        }
-                        ViewHelper.replace(view, this, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
-                    }
-                }
         var observerState = view.getTag(R.id.observer_state)
         if (observerState == null) {
-            observerState = Observer<Int> { integer: Int ->
-                StateLayoutSwitcher.setValue(slsView, integer)
+            observerState = Observer { integer: Int ->
+                setStateLayoutUiMapping(view, integer, { data.refresh() }, { data.emptyAction() }, null, null, null,
+                        emptyLayoutId, loadLayoutId, errorLayoutId, firstLayoutId, secondLayoutId, thirdLayoutId,
+                        emptyActionId, errorActionId, firstActionId, secondActionId, thirdActionId)
             }
             view.setTag(R.id.observer_state, observerState)
             data.getLifecycleOwner()?.let {
@@ -124,7 +99,6 @@ object StateLayoutDataBindingAdapter {
         if (stateLayout == null) {
             return
         }
-
         val slsView =
                 if (view.parent is StateLayoutSwitcher) {
                     view.parent as StateLayoutSwitcher
