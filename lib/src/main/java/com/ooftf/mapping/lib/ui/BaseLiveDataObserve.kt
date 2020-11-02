@@ -3,7 +3,10 @@ package com.ooftf.mapping.lib.ui
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -35,23 +38,39 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
     private val smarts = ArrayList<SmartRefreshLayout>()
 
     init {
-        liveData.finishLiveData.observe(owner, Observer { integer ->
+
+        liveData.invalidateBinding.observe(owner) {
+            (owner as? Fragment)?.let {
+                it.view?.let { fragmentView ->
+                    DataBindingUtil.findBinding<ViewDataBinding>(fragmentView)?.notifyChange()
+                }
+            }
+
+            (owner as? Activity)?.let {
+                DataBindingUtil
+                        .findBinding<ViewDataBinding>(it.findViewById<ViewGroup>(android.R.id.content)
+                                .getChildAt(0))
+                        ?.invalidateAll()
+            }
+        }
+
+        liveData.finishLiveData.observe(owner, { integer ->
             activity.setResult(integer)
             activity.finish()
         })
-        liveData.showLoading.observe(owner, Observer { calls ->
-            loadingDialog.getWindow()?.decorView?.tag = calls
+        liveData.showLoading.observe(owner, { calls ->
+            loadingDialog.getWindow().decorView.tag = calls
             if (calls.size > 0) {
                 loadingDialog.show()
             } else {
                 loadingDialog.dismiss()
             }
         })
-        liveData.startActivityLiveData.observe(owner, Observer { postcard -> postcard.navigation(activity) })
-        liveData.messageLiveData.observe(owner, Observer<String> { HttpUiMapping.provider.toast(it) })
+        liveData.startActivityLiveData.observe(owner, { postcard -> postcard.navigation(activity) })
+        liveData.messageLiveData.observe(owner, { HttpUiMapping.provider.toast(it) })
 
 
-        liveData.finishWithData.observe(owner, Observer {
+        liveData.finishWithData.observe(owner, {
             var intent = Intent()
             intent.putExtra(DEFAULT_RESULT_DATA, it.data)
             activity.setResult(it.code, intent)

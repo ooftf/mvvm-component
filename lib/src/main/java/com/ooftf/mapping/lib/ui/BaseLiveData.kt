@@ -24,32 +24,46 @@ class BaseLiveData {
     /**
      * //finish
      */
-    val finishLiveData by lazy {LostMutableLiveData<Int>()}
+    val finishLiveData by lazy { LostMutableLiveData<Int>() }
+
     /**
      * //finish
      */
-    val finishWithData by lazy {LostMutableLiveData<FinishData>()}
+    val finishWithData by lazy { LostMutableLiveData<FinishData>() }
+
     /**
      * start
      */
-    val startActivityLiveData by lazy {LostMutableLiveData<Postcard>()}
+    val startActivityLiveData by lazy { LostMutableLiveData<Postcard>() }
+
     /**
      * errorMessage
      */
-    val messageLiveData by lazy {LostMutableLiveData<String>()}
+    val messageLiveData by lazy { LostMutableLiveData<String>() }
+
     /**
      * showLoading
      */
-    val showLoading by lazy {MutableLiveData<MutableList<Cancelable>>()}
+    val showLoading by lazy { MutableLiveData<MutableList<Cancelable>>() }
     val smartRefresh by lazy { MutableLiveData<Int>() }
     val smartLoadMore by lazy { MutableLiveData<Int>() }
-    val stateLayout  by lazy { MutableLiveData<Int>()}
+    val stateLayout by lazy { MutableLiveData<Int>() }
     private val dataListLiveData by lazy { HashMap<Class<out Any>, MutableLiveData<out Any>>() }
+
+    /**
+     * errorMessage
+     */
+    internal val invalidateBinding by lazy { LostMutableLiveData<String>() }
+
     /**
      * finish
      */
     fun finish() {
         finishLiveData.value = Activity.RESULT_CANCELED
+    }
+
+    fun bindingInvalidateAll() {
+        invalidateBinding.postValue("")
     }
 
     fun <T : Any> getLiveData(tClass: Class<T>): MutableLiveData<T> {
@@ -88,7 +102,7 @@ class BaseLiveData {
      * showDialog
      */
     fun showDialog(call: Cancelable) {
-        GlobalScope.launch (Dispatchers.Main){
+        GlobalScope.launch(Dispatchers.Main) {
             var value = showLoading.value
             if (value == null) {
                 value = ArrayList<Cancelable>()
@@ -104,7 +118,7 @@ class BaseLiveData {
      * dismissDialog
      */
     fun dismissDialog(call: Cancelable?) {
-        GlobalScope.launch (Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             var value = showLoading.value
             if (value == null) {
                 value = ArrayList()
@@ -132,7 +146,7 @@ class BaseLiveData {
     }
 
     fun startRefresh() {
-        GlobalScope.launch (Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             if (smartRefresh.value == null) {
                 smartRefresh.setValue(1)
             } else {
@@ -143,7 +157,7 @@ class BaseLiveData {
 
     fun finishRefresh() {
         LogUtil.e("postFinishRefresh")
-        GlobalScope.launch (Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             if (smartRefresh.value == null) {
                 smartRefresh.setValue(0)
             } else {
@@ -169,22 +183,22 @@ class BaseLiveData {
 
     fun switchToEmpty() {
         LogUtil.e("postSwitchToEmpty")
-        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_EMPTY) }
+        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_EMPTY) }
     }
 
     fun switchToLoading() {
         LogUtil.e("postSwitchToLoading")
-        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_LOAD) }
+        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_LOAD) }
     }
 
     fun switchToError() {
         LogUtil.e("postSwitchToError")
-        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_ERROR) }
+        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_ERROR) }
     }
 
     fun switchToSuccess() {
         LogUtil.e("postSwitchToSuccess")
-        GlobalScope.launch (Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_SUCCESS) }
+        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_SUCCESS) }
     }
 
     fun attach(owner: LifecycleOwner, activity: Activity): BaseLiveDataObserve {
@@ -203,17 +217,17 @@ class BaseLiveData {
     private val multipleMap: MutableMap<Any, MutableLiveData<Int>> = HashMap()
     fun singleLoading(tag: Any) {
         val value = getSingleValue(tag)
-        GlobalScope.launch (Dispatchers.Main) { value.setValue(UIEvent.Single.LOADING) }
+        GlobalScope.launch(Dispatchers.Main) { value.setValue(UIEvent.Single.LOADING) }
     }
 
     fun singleSuccess(tag: Any) {
         val value = getSingleValue(tag)
-        GlobalScope.launch (Dispatchers.Main) { value.setValue(UIEvent.Single.SUCCESS) }
+        GlobalScope.launch(Dispatchers.Main) { value.setValue(UIEvent.Single.SUCCESS) }
     }
 
     fun singleFail(tag: Any) {
         val value = getSingleValue(tag)
-        GlobalScope.launch (Dispatchers.Main) { value.setValue(UIEvent.Single.FAIL) }
+        GlobalScope.launch(Dispatchers.Main) { value.setValue(UIEvent.Single.FAIL) }
     }
 
     fun getSingleValue(tag: Any): MutableLiveData<Int> {
@@ -228,12 +242,12 @@ class BaseLiveData {
 
     fun addMultiple(tag: Any) {
         val value = getMultipleValue(tag)
-        GlobalScope.launch (Dispatchers.Main) { value.setValue(value.value!! + 1) }
+        GlobalScope.launch(Dispatchers.Main) { value.setValue(value.value!! + 1) }
     }
 
     fun lessMultiple(tag: Any) {
         val value = getMultipleValue(tag)
-        GlobalScope.launch (Dispatchers.Main) { value.setValue(value.value!! - 1) }
+        GlobalScope.launch(Dispatchers.Main) { value.setValue(value.value!! - 1) }
     }
 
     fun getMultipleValue(tag: Any): MutableLiveData<Int> {
