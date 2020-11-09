@@ -118,11 +118,11 @@ object StateLayoutDataBindingAdapter {
                         secondActionId?.let { setSecondActionId(it) }
                         thirdActionId?.let { setThirdActionId(it) }
 
-                        errorAction?.let { setOnRetryListener(errorAction) }
-                        emptyAction?.let { setEmptyAction(errorAction) }
-                        firstAction?.let { setFirstAction(errorAction) }
-                        secondAction?.let { setSecondAction(errorAction) }
-                        thirdAction?.let { setThirdAction(errorAction) }
+                        errorAction?.let { setOnRetryListener(it) }
+                        emptyAction?.let { setEmptyAction(it) }
+                        firstAction?.let { setFirstAction(it) }
+                        secondAction?.let { setSecondAction(it) }
+                        thirdAction?.let { setThirdAction(it) }
                         ViewHelper.replace(view, this, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
                     }
                 }

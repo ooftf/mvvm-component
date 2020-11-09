@@ -2,6 +2,7 @@ package com.ooftf.mapping.lib.ui
 
 import android.view.View
 import android.view.ViewGroup
+import com.scwang.smartrefresh.layout.SmartRefreshLayout
 
 
 /**
@@ -16,11 +17,19 @@ object ViewHelper {
             wrapper.layoutParams = lp
         }
         val parent = view.parent as ViewGroup?
-        if (parent != null) {
-            val index = parent.indexOfChild(view)
-            parent.removeView(view)
-            wrapper.id = view.id
-            parent.addView(wrapper, index)
+        wrapper.id = view.id
+        when {
+            parent is SmartRefreshLayout -> {
+                parent.setRefreshContent(wrapper)
+            }
+            parent is com.scwang.smart.refresh.layout.SmartRefreshLayout -> {
+                parent.setRefreshContent(wrapper, params?.width ?: 0, params?.height ?: 0)
+            }
+            parent != null -> {
+                val index = parent.indexOfChild(view)
+                parent.removeView(view)
+                parent.addView(wrapper, index)
+            }
         }
         wrapper.addView(view, params)
     }
