@@ -234,7 +234,6 @@ class BaseLiveData {
         var data = singleMap[tag]
         if (data == null) {
             data = MutableLiveData()
-            data.value = UIEvent.Single.SUCCESS
             singleMap[tag] = data
         }
         return data
