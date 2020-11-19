@@ -6,12 +6,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.alibaba.android.arouter.facade.Postcard
+import com.ooftf.basic.utils.ThreadUtil
 import com.ooftf.mapping.lib.LogUtil
 import com.ooftf.mapping.lib.LostMutableLiveData
 import com.ooftf.widget.statelayout.IStateLayout
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -102,7 +100,7 @@ class BaseLiveData {
      * showDialog
      */
     fun showDialog(call: Cancelable) {
-        GlobalScope.launch(Dispatchers.Main) {
+        ThreadUtil.runOnUiThread(){
             var value = showLoading.value
             if (value == null) {
                 value = ArrayList<Cancelable>()
@@ -118,7 +116,7 @@ class BaseLiveData {
      * dismissDialog
      */
     fun dismissDialog(call: Cancelable?) {
-        GlobalScope.launch(Dispatchers.Main) {
+        ThreadUtil.runOnUiThread {
             var value = showLoading.value
             if (value == null) {
                 value = ArrayList()
@@ -146,7 +144,7 @@ class BaseLiveData {
     }
 
     fun startRefresh() {
-        GlobalScope.launch(Dispatchers.Main) {
+        ThreadUtil.runOnUiThread {
             if (smartRefresh.value == null) {
                 smartRefresh.setValue(1)
             } else {
@@ -157,7 +155,7 @@ class BaseLiveData {
 
     fun finishRefresh() {
         LogUtil.e("postFinishRefresh")
-        GlobalScope.launch(Dispatchers.Main) {
+        ThreadUtil.runOnUiThread {
             if (smartRefresh.value == null) {
                 smartRefresh.setValue(0)
             } else {
@@ -183,22 +181,22 @@ class BaseLiveData {
 
     fun switchToEmpty() {
         LogUtil.e("postSwitchToEmpty")
-        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_EMPTY) }
+        ThreadUtil.runOnUiThread { stateLayout.setValue(IStateLayout.STATE_EMPTY) }
     }
 
     fun switchToLoading() {
         LogUtil.e("postSwitchToLoading")
-        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_LOAD) }
+        ThreadUtil.runOnUiThread { stateLayout.setValue(IStateLayout.STATE_LOAD) }
     }
 
     fun switchToError() {
         LogUtil.e("postSwitchToError")
-        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_ERROR) }
+        ThreadUtil.runOnUiThread { stateLayout.setValue(IStateLayout.STATE_ERROR) }
     }
 
     fun switchToSuccess() {
         LogUtil.e("postSwitchToSuccess")
-        GlobalScope.launch(Dispatchers.Main) { stateLayout.setValue(IStateLayout.STATE_SUCCESS) }
+        ThreadUtil.runOnUiThread { stateLayout.setValue(IStateLayout.STATE_SUCCESS) }
     }
 
     fun attach(owner: LifecycleOwner, activity: Activity): BaseLiveDataObserve {
@@ -217,17 +215,17 @@ class BaseLiveData {
     private val multipleMap: MutableMap<Any, MutableLiveData<Int>> = HashMap()
     fun singleLoading(tag: Any) {
         val value = getSingleValue(tag)
-        GlobalScope.launch(Dispatchers.Main) { value.setValue(UIEvent.Single.LOADING) }
+        ThreadUtil.runOnUiThread { value.setValue(UIEvent.Single.LOADING) }
     }
 
     fun singleSuccess(tag: Any) {
         val value = getSingleValue(tag)
-        GlobalScope.launch(Dispatchers.Main) { value.setValue(UIEvent.Single.SUCCESS) }
+        ThreadUtil.runOnUiThread { value.setValue(UIEvent.Single.SUCCESS) }
     }
 
     fun singleFail(tag: Any) {
         val value = getSingleValue(tag)
-        GlobalScope.launch(Dispatchers.Main) { value.setValue(UIEvent.Single.FAIL) }
+        ThreadUtil.runOnUiThread { value.setValue(UIEvent.Single.FAIL) }
     }
 
     fun getSingleValue(tag: Any): MutableLiveData<Int> {
@@ -241,12 +239,12 @@ class BaseLiveData {
 
     fun addMultiple(tag: Any) {
         val value = getMultipleValue(tag)
-        GlobalScope.launch(Dispatchers.Main) { value.setValue(value.value!! + 1) }
+        ThreadUtil.runOnUiThread { value.setValue(value.value!! + 1) }
     }
 
     fun lessMultiple(tag: Any) {
         val value = getMultipleValue(tag)
-        GlobalScope.launch(Dispatchers.Main) { value.setValue(value.value!! - 1) }
+        ThreadUtil.runOnUiThread { value.setValue(value.value!! - 1) }
     }
 
     fun getMultipleValue(tag: Any): MutableLiveData<Int> {

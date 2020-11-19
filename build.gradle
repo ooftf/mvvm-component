@@ -15,7 +15,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:4.1.1'
         classpath 'com.ooftf:publish-bintray:0.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         // NOTE: Do not place your application dependencies here; they belong
@@ -35,10 +35,4 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-def LocalBintrayKey() {
-    Properties properties = new Properties()
-    InputStream inputStream = rootProject.file('local.properties').newDataInputStream();
-    properties.load(inputStream)
-    properties.getProperty('bintrayKey')
 }
