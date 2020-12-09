@@ -1,6 +1,7 @@
 package com.ooftf.mapping.lib
 
 import androidx.annotation.CallSuper
+import com.ooftf.basic.utils.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -16,41 +17,44 @@ import retrofit2.Response
 open class BaseCallback<T : IResponse> : Callback<T> {
     @CallSuper
     override fun onResponse(call: Call<T>, response: Response<T>) {
-        try {
-            doOnResponseContainer.forEach {
-                it.invoke(call, response)
-            }
-            if (response.code() != 200) {
-                doOnAnyFailContainer.forEach { it.invoke(call) }
-                onHttpCodeError(call, response)
-                return
-            }
-            val body = response.body()
-            if (body == null) {
-                doOnAnyFailContainer.forEach { it.invoke(call) }
-                onResponseFailureBodyNull(call, response)
-                return
-            }
 
-            when {
-                body.isSuccess() -> {
+        doOnResponseContainer.forEach {
+            it.invoke(call, response)
+        }
+        if (response.code() != 200) {
+            doOnAnyFailContainer.forEach { it.invoke(call) }
+            onHttpCodeError(call, response)
+            return
+        }
+        val body = response.body()
+        if (body == null) {
+            doOnAnyFailContainer.forEach { it.invoke(call) }
+            onResponseFailureBodyNull(call, response)
+            return
+        }
+
+        when {
+            body.isSuccess() -> {
+                try {
                     doOnResponseSuccessContainer.forEach {
                         it.invoke(call, body)
                     }
-                }
-                body.isTokenError() -> {
-                    doOnAnyFailContainer.forEach { it.invoke(call) }
-                    doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
-                    onResponseLoginStatusError(body)
-                }
-                else -> {
-                    doOnAnyFailContainer.forEach { it.invoke(call) }
-                    doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
+                } catch (t: Throwable) {
+                    toast("数据处理异常！")
+                    t.printStackTrace()
                 }
             }
-        } catch (t: Throwable) {
-            onFailure(call, t)
+            body.isTokenError() -> {
+                doOnAnyFailContainer.forEach { it.invoke(call) }
+                doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
+                onResponseLoginStatusError(body)
+            }
+            else -> {
+                doOnAnyFailContainer.forEach { it.invoke(call) }
+                doOnResponseCodeErrorContainer.forEach { it.invoke(call, body) }
+            }
         }
+
 
     }
 
