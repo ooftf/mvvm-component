@@ -40,6 +40,6 @@
     }
 ```
 
-### ![mvvm脚手架](https://github.com/ooftf/MVVM-Generator-ooftf)
+### [mvvm脚手架](https://github.com/ooftf/MVVM-Generator-ooftf)
     基于arch-frame-mvvm的AndroidStudio 插件，提供了一键生成Activity ViewModel Layout Fragment 功能
         
