@@ -43,3 +43,11 @@
 ### [mvvm脚手架](https://github.com/ooftf/MVVM-Generator-ooftf)
     基于arch-frame-mvvm的AndroidStudio 插件，提供了一键生成Activity ViewModel Layout Fragment 功能
         
+### 混淆
+    -keepclassmembers  class * extends androidx.lifecycle.AndroidViewModel {
+             <init>(...);
+        }
+    -keepclassmembers public class * extends androidx.databinding.ViewDataBinding{
+        public static  inflate(android.view.LayoutInflater);
+        public static  inflate(android.view.LayoutInflater,android.view.ViewGroup,boolean);
+    }
