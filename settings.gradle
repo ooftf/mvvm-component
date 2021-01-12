@@ -1,2 +1,3 @@
-include ':app', ':lib'
-rootProject.name='Mapping'
+include ':app', ':http-ui-mapping'
+include ':arch-frame-mvvm'
+rootProject.name='mvvm-component'
