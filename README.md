@@ -1,6 +1,6 @@
 # mvvm-component
     更方便实现项目MVVM架构的MVVM框架组件  
-### implementation 'com.ooftf:http-ui-mapping:1.3.0'    
+### http-ui-mapping[ ![Download](https://api.bintray.com/packages/ooftf/maven/http-ui-mapping/images/download.svg) ](https://bintray.com/ooftf/maven/http-ui-mapping/_latestVersion)    
     定义了网络请求和UI响应之间的联动
 #### 引用方式
 ```groovy
@@ -8,7 +8,7 @@
         url "https://dl.bintray.com/ooftf/maven"
     }
     dependencies {
-        implementation 'com.ooftf:sliding-layout:1.1.5'
+        implementation 'com.ooftf:http-ui-mapping:1.3.0'
     }  
 ```
 #### 初始化
@@ -28,7 +28,7 @@
     
             }, BuildConfig.DEBUG)
 ```      
-### implementation 'com.ooftf:arch-frame-mvvm:0.0.4'
+### arch-frame-mvvm [ ![Download](https://api.bintray.com/packages/ooftf/maven/arch-frame-mvvm/images/download.svg) ](https://bintray.com/ooftf/maven/arch-frame-mvvm/_latestVersion)
     基于http-ui-mapping，提供了BaseMvvmActivity和BaseMvvmFragment基础类
 #### 引用方式
 ```groovy
@@ -36,7 +36,7 @@
         url "https://dl.bintray.com/ooftf/maven"
     }
     dependencies {
-        implementation 'com.ooftf:sliding-layout:1.1.5'
+        implementation 'com.ooftf:arch-frame-mvvm:0.0.4'
     }
 ```
 
