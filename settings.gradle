@@ -1,3 +1,4 @@
+include ':mapping-button'
 include ':app', ':http-ui-mapping'
 include ':arch-frame-mvvm'
 rootProject.name='mvvm-component'

@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/arch-frame-mvvm" />
             <option value="$PROJECT_DIR$/http-ui-mapping" />
+            <option value="$PROJECT_DIR$/mapping-button" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
