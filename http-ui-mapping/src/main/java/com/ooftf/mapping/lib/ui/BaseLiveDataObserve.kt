@@ -1,7 +1,6 @@
 package com.ooftf.mapping.lib.ui
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -24,17 +23,20 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
     constructor(liveData: BaseLiveData, activity: AppCompatActivity) : this(liveData, activity, activity)
     constructor(liveData: BaseLiveData, fragment: Fragment) : this(liveData, fragment, fragment.activity!!)
 
-    private val loadingDialog by lazy {
+    private var loadingDialog: HttpUiMapping.MyDialogInterface? = null
+
+    fun createDialog(activity: Activity): HttpUiMapping.MyDialogInterface {
         var dialog = HttpUiMapping.provider.createLoadingDialog(activity)
-        dialog.setOnCancelListener(DialogInterface.OnCancelListener {
+        dialog.setOnCancelListener {
             (dialog.getWindow().decorView.tag)?.let {
                 (it as? List<Cancelable>)?.forEach { item ->
                     item.cancel()
                 }
             }
-        })
-        dialog
+        }
+        return dialog
     }
+
     private val smarts = ArrayList<SmartRefreshLayout>()
 
     init {
@@ -59,12 +61,19 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
             activity.finish()
         })
         liveData.showLoading.observe(owner, { calls ->
-            loadingDialog.getWindow().decorView.tag = calls
             if (calls.size > 0) {
-                loadingDialog.show()
+                if (loadingDialog == null) {
+                    loadingDialog = createDialog(activity)
+                }
+                loadingDialog?.let {
+                    it.getWindow().decorView.tag = calls
+                    it.show()
+                }
             } else {
-                loadingDialog.dismiss()
+                loadingDialog?.dismiss()
+                loadingDialog = null
             }
+
         })
         liveData.startActivityLiveData.observe(owner, { postcard -> postcard.navigation(activity) })
         liveData.messageLiveData.observe(owner, { HttpUiMapping.provider.toast(it) })
