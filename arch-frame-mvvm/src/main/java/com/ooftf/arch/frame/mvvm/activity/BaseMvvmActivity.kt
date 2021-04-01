@@ -8,7 +8,6 @@ import com.ooftf.arch.frame.mvvm.BR
 import com.ooftf.arch.frame.mvvm.vm.BaseViewModel
 import com.ooftf.basic.utils.getGenericParamType
 import com.ooftf.mapping.lib.ui.BaseLiveDataObserve
-import java.lang.reflect.ParameterizedType
 
 /**
  *
@@ -17,18 +16,19 @@ import java.lang.reflect.ParameterizedType
  * @date 2019/8/2 0002
  */
 abstract class BaseMvvmActivity<B : ViewDataBinding, V : BaseViewModel> : BaseBindingActivity<B>() {
-    lateinit var viewModel: V
+    val viewModel: V by lazy {
+        val viewModelFactory = getViewModelFactory()
+        if (viewModelFactory == null) {
+            ViewModelProvider(this).get(getVClass())
+        } else {
+            ViewModelProvider(this, viewModelFactory).get(getVClass())
+        }
+    }
     lateinit var baseLiveDataObserve: BaseLiveDataObserve
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModelFactory = getViewModelFactory()
-        viewModel = if (viewModelFactory == null) {
-            ViewModelProvider(this).get(getVClass())
-        } else {
-            ViewModelProvider(this, viewModelFactory).get(getVClass())
-        }
         viewModel.setLifecycleOwner(this)
         viewModel.setActivity(this)
         binding.setVariable(getVariableId(), viewModel)
@@ -36,7 +36,7 @@ abstract class BaseMvvmActivity<B : ViewDataBinding, V : BaseViewModel> : BaseBi
     }
 
     open fun getViewModelFactory(): ViewModelProvider.Factory? {
-        return null
+        return defaultViewModelProviderFactory
     }
 
 

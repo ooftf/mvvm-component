@@ -144,16 +144,6 @@ open class BaseActivity : AppCompatActivity() {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-        /*try {
-            this.onCreate(savedInstanceState)
-        } catch (e: Throwable) {
-            CrashReport.postCatchedException(e)
-            if (BuildConfig.DEBUG) {
-                toast(e.toString())
-            }
-            setContentView(R.layout.base_layout_error_default) // TODO
-        }
-*/
     }
 
 
