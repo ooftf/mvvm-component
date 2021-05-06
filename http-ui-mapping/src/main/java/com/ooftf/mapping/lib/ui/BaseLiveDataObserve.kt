@@ -80,8 +80,16 @@ class BaseLiveDataObserve(private var liveData: BaseLiveData, private var owner:
 
 
         liveData.finishWithData.observe(owner, {
-            var intent = Intent()
+            val intent = Intent()
             intent.putExtra(DEFAULT_RESULT_DATA, it.data)
+            activity.setResult(it.code, intent)
+            if (it.isFinish) {
+                activity.finish()
+            }
+        })
+        liveData.finishActivity.observe(owner, {
+            val intent = Intent()
+            intent.replaceExtras(it.data)
             activity.setResult(it.code, intent)
             if (it.isFinish) {
                 activity.finish()

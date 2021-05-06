@@ -30,6 +30,11 @@ class BaseLiveData {
     val finishWithData by lazy { LostMutableLiveData<FinishData>() }
 
     /**
+     * //finish
+     */
+    val finishActivity by lazy { LostMutableLiveData<FinishData>() }
+
+    /**
      * start
      */
     val startActivityLiveData by lazy { LostMutableLiveData<Postcard>() }
@@ -88,8 +93,17 @@ class BaseLiveData {
     /**
      * finish
      */
+    @Deprecated("推荐使用 finishActivity 这两个获取 数据的方式不同，要注意下", ReplaceWith("finishActivity"))
     fun finish(result: FinishData) {
         finishWithData.value = result
+    }
+
+    fun finishActivity(result: FinishData? = null) {
+        if (result == null) {
+            finish()
+        } else {
+            finishActivity.postValue(result)
+        }
     }
 
     fun startActivity(postcart: Postcard) {
@@ -100,7 +114,7 @@ class BaseLiveData {
      * showDialog
      */
     fun showDialog(call: Cancelable) {
-        ThreadUtil.runOnUiThread(){
+        ThreadUtil.runOnUiThread() {
             var value = showLoading.value
             if (value == null) {
                 value = ArrayList<Cancelable>()
