@@ -35,7 +35,7 @@ android {
 }
 publish {
     artifactId = 'http-ui-mapping' // bintray创建的package
-    version = '1.4.0-SNAPSHOT'
+    version = '1.4.1'
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -54,5 +54,5 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     api 'com.scwang.smart:refresh-layout-kernel:2.0.3'      //核心必须依赖
-    api 'com.ooftf:basic:0.2.11'
+    api 'com.github.ooftf:basic:0.3.0'
 }

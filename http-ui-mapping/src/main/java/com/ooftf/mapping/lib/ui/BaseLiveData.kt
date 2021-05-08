@@ -79,8 +79,7 @@ class BaseLiveData {
     }
 
     fun <T : Any> post(data: T) {
-        val classs = data.javaClass
-        getLiveData(classs).postValue(data)
+        getLiveData(data.javaClass).postValue(data)
     }
 
     /**
