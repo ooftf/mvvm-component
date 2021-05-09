@@ -1,17 +1,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'ooftf-maven'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion 16
+        targetSdkVersion 30
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -28,8 +25,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    dataBinding {
-        enabled true
+    buildFeatures {
+        dataBinding true
     }
 
 }
@@ -43,7 +40,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    api 'com.ooftf:master-widget-statelayout:1.1.2'
+    api 'com.github.ooftf:master-widget-statelayout:1.1.2'
     api 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.2'
@@ -53,6 +50,6 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    api 'com.scwang.smart:refresh-layout-kernel:2.0.3'      //核心必须依赖
+    api 'com.scwang.smart:refresh-layout-kernel:2.0.3'
     api 'com.github.ooftf:basic:0.3.0'
 }

@@ -1,14 +1,15 @@
 # mvvm-component
     更方便实现项目MVVM架构的MVVM框架组件  
-### http-ui-mapping[ ![Download](https://api.bintray.com/packages/ooftf/maven/http-ui-mapping/images/download.svg) ](https://bintray.com/ooftf/maven/http-ui-mapping/_latestVersion)    
-    定义了网络请求和UI响应之间的联动
+### http-ui-mapping
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.ooftf/http-ui-mapping/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.ooftf/http-ui-mapping)
+
+定义了网络请求和UI响应之间的联动
 #### 引用方式
 ```groovy
-    maven {
-        url "https://dl.bintray.com/ooftf/maven"
-    }
+    mavenCentral()
+    
     dependencies {
-        implementation 'com.ooftf:http-ui-mapping:1.3.0'
+        implementation 'com.github.ooftf:http-ui-mapping:1.4.1'
     }  
 ```
 #### 初始化
@@ -28,18 +29,27 @@
     
             }, BuildConfig.DEBUG)
 ```      
-### arch-frame-mvvm [ ![Download](https://api.bintray.com/packages/ooftf/maven/arch-frame-mvvm/images/download.svg) ](https://bintray.com/ooftf/maven/arch-frame-mvvm/_latestVersion)
-    基于http-ui-mapping，提供了BaseMvvmActivity和BaseMvvmFragment基础类
+### arch-frame-mvvm
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.ooftf/arch-frame-mvvm/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.ooftf/arch-frame-mvvm)
+
+基于http-ui-mapping，提供了BaseMvvmActivity和BaseMvvmFragment基础类
 #### 引用方式
 ```groovy
-    maven {
-        url "https://dl.bintray.com/ooftf/maven"
-    }
+    mavenCentral()
     dependencies {
-        implementation 'com.ooftf:arch-frame-mvvm:0.0.4'
+        implementation 'com.github.ooftf:arch-frame-mvvm:0.1.5'
     }
 ```
+### mapping-button
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.ooftf/mapping-button/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.ooftf/mapping-button)
 
+#### 引用方式
+```groovy
+    mavenCentral()
+    dependencies {
+        implementation 'com.github.ooftf:mapping-button:1.3.8'
+    }
+```
 ### [mvvm脚手架](https://github.com/ooftf/MVVM-Generator-ooftf)
     基于arch-frame-mvvm的AndroidStudio 插件，提供了一键生成Activity ViewModel Layout Fragment 功能
         
