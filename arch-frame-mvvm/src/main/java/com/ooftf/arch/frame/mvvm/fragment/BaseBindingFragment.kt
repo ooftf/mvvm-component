@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import androidx.viewbinding.ViewBinding
 import com.ooftf.basic.utils.getGenericParamType
 import java.lang.reflect.ParameterizedType
 
@@ -13,10 +14,12 @@ import java.lang.reflect.ParameterizedType
  * @email 994749769@qq.com
  * @date 2021/1/7
  */
-open class BaseBindingFragment<B : ViewDataBinding> : BaseLazyFragment() {
+open class BaseBindingFragment<B : ViewBinding> : BaseLazyFragment() {
     lateinit var binding: B
     override fun onLoad(rootView: View) {
-        binding.lifecycleOwner = this
+        (binding as? ViewDataBinding)?.let {
+            it.lifecycleOwner = this
+        }
     }
 
     override fun getLayoutId(): Int {

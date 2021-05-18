@@ -19,7 +19,8 @@ import java.lang.ref.WeakReference
  * @email 994749769@qq.com
  * @date 2019/7/23 0023
  */
-open class BaseViewModel(application: Application) : AndroidViewModel(application), IStateLayoutData, ISmartLayoutData {
+open class BaseViewModel(application: Application) : AndroidViewModel(application),
+    IStateLayoutData, ISmartLayoutData {
     var baseLiveData = BaseLiveData()
     var disposables = CompositeDisposable()
     var disposablesCompat = io.reactivex.disposables.CompositeDisposable()
@@ -82,7 +83,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
 
     fun getActivity(): Activity? {
-        return activityWeakReference?.get()
+        return activityWeakReference?.get()?.takeUnless { it.isDestroyed }
     }
 
     open fun setFragment(fragment: Fragment) {

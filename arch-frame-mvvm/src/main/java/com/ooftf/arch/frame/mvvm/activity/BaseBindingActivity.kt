@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.annotation.CallSuper
 import androidx.databinding.ViewDataBinding
+import androidx.viewbinding.ViewBinding
 import com.ooftf.basic.utils.getGenericParamType
 import java.lang.reflect.ParameterizedType
 
@@ -13,14 +14,17 @@ import java.lang.reflect.ParameterizedType
  * @email 994749769@qq.com
  * @date 2021/1/7
  */
-open class BaseBindingActivity<B : ViewDataBinding> : BaseActivity() {
+open class BaseBindingActivity<B : ViewBinding> : BaseActivity() {
     lateinit var binding: B
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindLayout()
-        binding.lifecycleOwner = this
+        (binding as? ViewDataBinding)?.let {
+            it.lifecycleOwner = this
+        }
+
     }
 
     /**
