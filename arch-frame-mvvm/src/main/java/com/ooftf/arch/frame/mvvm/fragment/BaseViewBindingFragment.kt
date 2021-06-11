@@ -3,10 +3,9 @@ package com.ooftf.arch.frame.mvvm.fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.ViewDataBinding
+import android.widget.FrameLayout
 import androidx.viewbinding.ViewBinding
 import com.ooftf.basic.utils.getGenericParamType
-import java.lang.reflect.ParameterizedType
 
 /**
  *
@@ -15,10 +14,23 @@ import java.lang.reflect.ParameterizedType
  * @date 2021/1/7
  */
 abstract class BaseViewBindingFragment<B : ViewBinding> : BaseLazyFragment() {
-    lateinit var binding: B
+    val binding: B by lazy {
+        val bClass = getBClass()
+        val method = bClass.getMethod(
+            "inflate",
+            LayoutInflater::class.java,
+            ViewGroup::class.java,
+            Boolean::class.java
+        )
+        method.invoke(null, layoutInflater, view, false) as B
+    }
 
     override fun getLayoutId(): Int {
         return 0
+    }
+
+    override fun onLoad(rootView: View) {
+        (rootView as ViewGroup).addView(binding.root)
     }
 
     /**
@@ -29,14 +41,6 @@ abstract class BaseViewBindingFragment<B : ViewBinding> : BaseLazyFragment() {
     }
 
     override fun getContentView(inflater: LayoutInflater, container: ViewGroup?): View {
-        val bClass = getBClass()
-        val method = bClass.getMethod(
-                "inflate",
-                LayoutInflater::class.java,
-                ViewGroup::class.java,
-                Boolean::class.java
-        )
-        binding = method.invoke(null, inflater, container, false) as B
-        return binding.root
+        return FrameLayout(context)
     }
 }

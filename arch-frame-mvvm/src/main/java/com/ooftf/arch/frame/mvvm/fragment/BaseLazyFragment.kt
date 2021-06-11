@@ -30,7 +30,10 @@ abstract class BaseLazyFragment : BaseFragment(), LazyFragmentProxy.LazyFragment
         lazyFragmentProxy.onViewCreated(view, savedInstanceState)
     }
 
-
+    override fun preLoad(rootView: View){}
+    override fun afterLoad(rootView: View){
+        mSimpleImmersionProxy.onConfigurationChanged(null)
+    }
     /**
      * 这个时候view已经创建
      */

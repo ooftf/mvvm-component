@@ -28,47 +28,42 @@ public class LazyFragmentProxy<T extends Fragment & LazyFragmentProxy.LazyFragme
     public boolean isLoaded = false;
 
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (fragment.lazyEnabled()) {
-            View view = null;
-            if (rootViewReference != null) {
-                view = rootViewReference.get();
-            }
-            if (view == null) {
-                view = fragment.getView();
-                rootViewReference = new WeakReference<>(view);
-            }
-            if (view == null) {
-                isLoaded = false;
-                view = fragment.getContentView(inflater, container);
-                rootViewReference = new WeakReference<>(view);
-            }
-            loadJudgment(view);
-            return view;
-        } else {
-            View view;
-            if (fragment.getView() == null) {
-                view = fragment.getContentView(inflater, container);
-            } else {
-                view = fragment.getView();
-            }
-            loadJudgment(view);
-            return fragment.getView();
+        View view = null;
+        if (rootViewReference != null) {
+            view = rootViewReference.get();
         }
+        if (view == null) {
+            view = fragment.getView();
+            rootViewReference = new WeakReference<>(view);
+        }
+        if (view == null) {
+            isLoaded = false;
+            view = fragment.getContentView(inflater, container);
+            rootViewReference = new WeakReference<>(view);
+        }
+        return view;
     }
+
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         if (fragment.lazyEnabled()) {
             loadJudgment(fragment.getView());
         } else {
-            fragment.onLoad(view);
+            load(view);
         }
     }
 
     private void loadJudgment(View view) {
         if (view != null && fragment.getUserVisibleHint() && !isLoaded && !fragment.isHidden() && fragment.isShowing()) {
-            fragment.onLoad(view);
-            isLoaded = true;
+            load(view);
         }
+    }
+
+    private void load(View view) {
+        fragment.preLoad(view);
+        fragment.onLoad(view);
+        isLoaded = true;
+        fragment.afterLoad(view);
     }
 
     public void setUserVisibleHint(boolean visibleHint) {
@@ -106,8 +101,11 @@ public class LazyFragmentProxy<T extends Fragment & LazyFragmentProxy.LazyFragme
         /**
          * 初始化界面
          */
+        void preLoad(@NotNull View rootView);
 
         void onLoad(@NotNull View rootView);
+
+        void afterLoad(@NotNull View rootView);
 
         boolean lazyEnabled();
 

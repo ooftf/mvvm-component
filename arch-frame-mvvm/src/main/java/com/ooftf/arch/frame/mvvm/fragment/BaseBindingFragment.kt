@@ -1,13 +1,8 @@
 package com.ooftf.arch.frame.mvvm.fragment
 
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.databinding.ViewDataBinding
-import androidx.viewbinding.ViewBinding
-import com.ooftf.basic.utils.getGenericParamType
-import java.lang.reflect.ParameterizedType
 
 /**
  *
@@ -18,6 +13,7 @@ import java.lang.reflect.ParameterizedType
 abstract class BaseBindingFragment<B : ViewDataBinding> : BaseViewBindingFragment<B>() {
     @CallSuper
     override fun onLoad(rootView: View) {
+        super.onLoad(rootView)
         binding.lifecycleOwner = this
     }
 

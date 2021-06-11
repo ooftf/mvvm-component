@@ -17,7 +17,8 @@ import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
 /**
  * Created by master on 2016/4/12.
  */
-abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionOwner, BackPressedHandler {
+abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionOwner,
+    BackPressedHandler {
     private var mToast: Toast? = null
     private var touchable = false
     private var alive = false
@@ -53,7 +54,7 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
         return activity as BaseActivity
     }
 
-    private val mSimpleImmersionProxy = SimpleImmersionProxy(this)
+    protected val mSimpleImmersionProxy = SimpleImmersionProxy(this)
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -80,6 +81,10 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         mSimpleImmersionProxy.isUserVisibleHint = isVisibleToUser
+    }
+
+    fun isRealVisible(): Boolean {
+        return view != null && getUserVisibleHint() && !isHidden() && isShowing()
     }
 
     fun isAlive(): Boolean = alive
@@ -123,7 +128,8 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
 
     override fun initImmersionBar() {
 
-        val immersionBar = ImmersionBar.with(this).statusBarDarkFont(isDarkFont()).keyboardEnable(true)
+        val immersionBar =
+            ImmersionBar.with(this).statusBarDarkFont(isDarkFont()).keyboardEnable(true)
         var toolbar = getToolbar()
         if (toolbar == null) {
             toolbar = view?.findViewById<View>(getToolbarId())

@@ -19,7 +19,13 @@ abstract class BaseListViewModel<T>(application: Application) : BaseViewModel(ap
     }
 
     open fun createItemBinding() =
-            ItemBinding.of<T>(BR.item, getItemLayout()).bindExtra(BR.viewModel, this)
+        ItemBinding.of<T> { itemBinding, position, item ->
+            itemBinding
+                .set(BR.item, getItemLayout())
+                .bindExtra(BR.position, position)
+                .bindExtra(BR.viewModel, this)
+        }
+            .set(BR.item, getItemLayout())
 
     open fun handleResponseList(data: List<T>) {
         items.clear()

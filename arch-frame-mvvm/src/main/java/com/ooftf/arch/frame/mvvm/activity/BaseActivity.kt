@@ -2,6 +2,7 @@ package com.ooftf.arch.frame.mvvm.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -12,9 +13,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.gyf.immersionbar.ImmersionBar
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
@@ -73,30 +72,36 @@ open class BaseActivity : AppCompatActivity() {
         return this
     }
 
-    init {
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
         if (isImmersionEnable()) {
-            lifecycle.addObserver(object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-                fun create() {
-                    ImmersionBar.with(this@BaseActivity).statusBarDarkFont(isDarkFont())
-                            .navigationBarColorInt(Color.WHITE)
-                            .keyboardEnable(true, getKeyBordMode())
-                            .init()
-                    var list: MutableList<View> = ArrayList()
-                    getToolbarId().forEach {
-                        findViewById<View>(it)?.let { it ->
-                            list.add(it)
-                        }
+            lifecycle.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    if(event == Lifecycle.Event.ON_CREATE){
+                        setUpImmersionBar()
                     }
-                    getToolbar().forEach {
-                        list.add(it)
-                    }
-                    ImmersionBar.setTitleBar(this@BaseActivity, *list.toTypedArray())
                 }
-
             })
         }
     }
+
+    private fun setUpImmersionBar() {
+        ImmersionBar.with(this@BaseActivity).statusBarDarkFont(isDarkFont())
+            .navigationBarColorInt(Color.WHITE)
+            .keyboardEnable(true, getKeyBordMode())
+            .init()
+        var list: MutableList<View> = ArrayList()
+        getToolbarId().forEach {
+            findViewById<View>(it)?.let { it ->
+                list.add(it)
+            }
+        }
+        getToolbar().forEach {
+            list.add(it)
+        }
+        ImmersionBar.setTitleBar(this@BaseActivity, *list.toTypedArray())
+    }
+
 
     open fun getKeyBordMode() = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
     fun finishSuccess() {
