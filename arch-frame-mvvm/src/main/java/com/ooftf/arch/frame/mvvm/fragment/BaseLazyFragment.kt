@@ -31,6 +31,7 @@ abstract class BaseLazyFragment : BaseFragment(), LazyFragmentProxy.LazyFragment
     }
 
     override fun preLoad(rootView: View){}
+    @CallSuper
     override fun afterLoad(rootView: View){
         mSimpleImmersionProxy.onConfigurationChanged(null)
     }

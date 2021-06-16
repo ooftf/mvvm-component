@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.CallSuper
 import androidx.viewbinding.ViewBinding
 import com.ooftf.basic.utils.getGenericParamType
 
@@ -28,7 +29,7 @@ abstract class BaseViewBindingFragment<B : ViewBinding> : BaseLazyFragment() {
     override fun getLayoutId(): Int {
         return 0
     }
-
+    @CallSuper
     override fun onLoad(rootView: View) {
         (rootView as ViewGroup).addView(binding.root)
     }
