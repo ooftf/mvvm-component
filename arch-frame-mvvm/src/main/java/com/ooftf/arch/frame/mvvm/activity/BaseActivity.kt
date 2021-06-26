@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import com.gyf.immersionbar.ImmersionBar
 import com.ooftf.arch.frame.mvvm.R
+import com.ooftf.arch.frame.mvvm.immersion.Immersion
 import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
 import com.ooftf.arch.frame.mvvm.utils.PostcardSerializable
 import com.ooftf.basic.utils.getCurrentFragment
@@ -86,10 +87,10 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     private fun setUpImmersionBar() {
-        ImmersionBar.with(this@BaseActivity).statusBarDarkFont(isDarkFont())
+       /* ImmersionBar.with(this@BaseActivity).statusBarDarkFont(isDarkFont())
             .navigationBarColorInt(Color.WHITE)
             .keyboardEnable(true, getKeyBordMode())
-            .init()
+            .init()*/
         var list: MutableList<View> = ArrayList()
         getToolbarId().forEach {
             findViewById<View>(it)?.let { it ->
@@ -99,8 +100,11 @@ open class BaseActivity : AppCompatActivity() {
         getToolbar().forEach {
             list.add(it)
         }
-        ImmersionBar.setTitleBar(this@BaseActivity, *list.toTypedArray())
+        Immersion.setup(this,isDarkFont())
+        Immersion.fitStatusBar(*list.toTypedArray())
+        //ImmersionBar.setTitleBar(this@BaseActivity, *list.toTypedArray())
     }
+
 
 
     open fun getKeyBordMode() = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
@@ -157,32 +161,6 @@ open class BaseActivity : AppCompatActivity() {
      */
     fun isScreenForcePortrait() = true
 
-
-    fun showDialogMessage(
-            message: CharSequence,
-            listener: DialogInterface.OnClickListener = DialogInterface.OnClickListener { dialog, which -> dialog?.dismiss() }
-    ) {
-        showDialogMessage(message, "确定", listener)
-    }
-
-    fun showDialogMessage(message: CharSequence) {
-        showDialogMessage(
-                message,
-                "确定",
-                DialogInterface.OnClickListener { dialog, which -> dialog?.dismiss() })
-    }
-
-    fun showDialogMessage(
-            message: CharSequence,
-            positiveText: CharSequence = "确定",
-            positiveListener: DialogInterface.OnClickListener = DialogInterface.OnClickListener { dialog, which -> dialog?.dismiss() }
-    ) {
-        AlertDialog
-                .Builder(this)
-                .setMessage(message)
-                .setPositiveButton(positiveText, positiveListener)
-                .show()
-    }
 
     private var mActivityResultCallback: ForResultCallback? = null
     fun startActivityForResult(intent: Intent?, callback: ForResultCallback) {

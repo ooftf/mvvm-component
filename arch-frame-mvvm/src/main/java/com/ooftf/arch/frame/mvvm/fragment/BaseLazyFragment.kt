@@ -16,9 +16,9 @@ abstract class BaseLazyFragment : BaseFragment(), LazyFragmentProxy.LazyFragment
     private val lazyFragmentProxy = LazyFragmentProxy<BaseLazyFragment>(this)
 
     final override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         return lazyFragmentProxy.onCreateView(inflater, container, savedInstanceState)
@@ -30,11 +30,13 @@ abstract class BaseLazyFragment : BaseFragment(), LazyFragmentProxy.LazyFragment
         lazyFragmentProxy.onViewCreated(view, savedInstanceState)
     }
 
-    override fun preLoad(rootView: View){}
+    override fun preLoad(rootView: View) {}
+
     @CallSuper
-    override fun afterLoad(rootView: View){
-        mSimpleImmersionProxy.onConfigurationChanged(null)
+    override fun afterLoad(rootView: View) {
+        initImmersionBar()
     }
+
     /**
      * 这个时候view已经创建
      */
@@ -63,6 +65,10 @@ abstract class BaseLazyFragment : BaseFragment(), LazyFragmentProxy.LazyFragment
 
     open fun getLayoutId(): Int {
         return 0
+    }
+
+    override fun isInflateContentOnCreatedView(): Boolean {
+        return false
     }
 
     override fun getContentView(inflater: LayoutInflater, container: ViewGroup?): View {

@@ -2,16 +2,14 @@ package com.ooftf.arch.frame.mvvm.fragment
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
-import com.gyf.immersionbar.ImmersionBar
 import com.gyf.immersionbar.components.SimpleImmersionOwner
-import com.gyf.immersionbar.components.SimpleImmersionProxy
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.arch.frame.mvvm.activity.BaseActivity
+import com.ooftf.arch.frame.mvvm.immersion.Immersion
 import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
 
 /**
@@ -54,33 +52,48 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
         return activity as BaseActivity
     }
 
-    protected val mSimpleImmersionProxy = SimpleImmersionProxy(this)
+    //protected val mSimpleImmersionProxy = SimpleImmersionProxy(this)
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mSimpleImmersionProxy.onActivityCreated(savedInstanceState)
+        if (immersionBarEnabled()) {
+            activity?.let {
+                Immersion.setup(it, isDarkFont())
+            }
+        }
+        //mSimpleImmersionProxy.onActivityCreated(savedInstanceState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mSimpleImmersionProxy.onDestroy()
+        //mSimpleImmersionProxy.onDestroy()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        mSimpleImmersionProxy.onHiddenChanged(hidden)
+        //mSimpleImmersionProxy.onHiddenChanged(hidden)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        mSimpleImmersionProxy.onConfigurationChanged(newConfig)
+        //mSimpleImmersionProxy.onConfigurationChanged(newConfig)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (isInflateContentOnCreatedView()) {
+            initImmersionBar()
+        }
+    }
+
+    open fun isInflateContentOnCreatedView(): Boolean {
+        return true
+    }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        mSimpleImmersionProxy.isUserVisibleHint = isVisibleToUser
+        //mSimpleImmersionProxy.isUserVisibleHint = isVisibleToUser
     }
 
     fun isRealVisible(): Boolean {
@@ -108,8 +121,16 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
         return R.id.toolbar
     }
 
+    open fun getToolbarIds(): IntArray {
+        return intArrayOf(R.id.toolbar)
+    }
+
     open fun getToolbar(): View? {
         return null
+    }
+
+    open fun getToolbars(): Array<View> {
+        return emptyArray()
     }
 
     open fun isDarkFont(): Boolean {
@@ -126,9 +147,12 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
         return true
     }
 
-    override fun initImmersionBar() {
 
-        val immersionBar =
+    override fun initImmersionBar() {
+        if (!immersionBarEnabled()) {
+            return
+        }
+        /*val immersionBar =
             ImmersionBar.with(this).statusBarDarkFont(isDarkFont()).keyboardEnable(true)
         var toolbar = getToolbar()
         if (toolbar == null) {
@@ -137,7 +161,25 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
         if (toolbar != null) {
             immersionBar.titleBar(toolbar)
         }
-        immersionBar.navigationBarColorInt(Color.WHITE).init()
+        immersionBar.navigationBarColorInt(Color.WHITE).init()*/
+
+        var list: MutableList<View> = ArrayList()
+        getToolbarIds().forEach {
+            view?.findViewById<View>(it)?.let { it ->
+                list.add(it)
+            }
+        }
+        view?.findViewById<View>(getToolbarId())?.let { it ->
+            list.add(it)
+        }
+
+        getToolbar()?.let {
+            list.add(it)
+        }
+        getToolbars().forEach {
+            list.add(it)
+        }
+        Immersion.fitStatusBar(*list.toTypedArray())
     }
 
     override fun onBackPressed(): Boolean {
