@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
+import com.blankj.utilcode.util.KeyboardUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.arch.frame.mvvm.immersion.Immersion
@@ -78,7 +79,7 @@ open class BaseActivity : AppCompatActivity() {
         if (isImmersionEnable()) {
             lifecycle.addObserver(object : LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                    if(event == Lifecycle.Event.ON_CREATE){
+                    if (event == Lifecycle.Event.ON_CREATE) {
                         setUpImmersionBar()
                     }
                 }
@@ -87,10 +88,10 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     private fun setUpImmersionBar() {
-       /* ImmersionBar.with(this@BaseActivity).statusBarDarkFont(isDarkFont())
-            .navigationBarColorInt(Color.WHITE)
-            .keyboardEnable(true, getKeyBordMode())
-            .init()*/
+        /* ImmersionBar.with(this@BaseActivity).statusBarDarkFont(isDarkFont())
+             .navigationBarColorInt(Color.WHITE)
+             .keyboardEnable(true, getKeyBordMode())
+             .init()*/
         var list: MutableList<View> = ArrayList()
         getToolbarId().forEach {
             findViewById<View>(it)?.let { it ->
@@ -100,11 +101,11 @@ open class BaseActivity : AppCompatActivity() {
         getToolbar().forEach {
             list.add(it)
         }
-        Immersion.setup(this,isDarkFont())
+        Immersion.setup(this, isDarkFont())
         Immersion.fitStatusBar(*list.toTypedArray())
         //ImmersionBar.setTitleBar(this@BaseActivity, *list.toTypedArray())
+        KeyboardUtils.fixSoftInputLeaks(this)
     }
-
 
 
     open fun getKeyBordMode() = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
@@ -183,10 +184,10 @@ open class BaseActivity : AppCompatActivity() {
     @SuppressLint("CheckResult")
     fun delayFinish(mil: Long) {
         Observable.timer(mil, TimeUnit.MILLISECONDS)
-                .bindDestroy()
-                .subscribe {
-                    finish()
-                }
+            .bindDestroy()
+            .subscribe {
+                finish()
+            }
     }
 
     fun toast(content: String, duration: Int = Toast.LENGTH_SHORT) {

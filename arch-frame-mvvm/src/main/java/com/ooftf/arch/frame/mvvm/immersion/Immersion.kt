@@ -2,15 +2,17 @@ package com.ooftf.arch.frame.mvvm.immersion
 
 import android.app.Activity
 import android.graphics.Color
-import android.graphics.Point
 import android.os.Build
+import android.util.DisplayMetrics
 import android.view.*
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import com.blankj.utilcode.util.KeyboardUtils
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.basic.AppHolder
+import com.ooftf.basic.utils.setPaddingBottom
 import com.ooftf.basic.utils.setPaddingTop
 
 /**
@@ -29,15 +31,7 @@ object Immersion {
             )
         )
     }
-    val navigationBarHeight: Int by lazy {
-        AppHolder.app.resources.getDimensionPixelSize(
-            AppHolder.app.resources.getIdentifier(
-                "status_bar_height",
-                "dimen",
-                "android"
-            )
-        )
-    }
+
 
     fun fitStatusBar(vararg view: View) {
         view.forEach {
@@ -56,23 +50,28 @@ object Immersion {
     }
 
     fun fitNavigationBar(activity: Activity) {
-        if (!isNavigationBarShow(activity)) {
+
+        val navigationHeight = getNavigationHeight(activity)
+        if (navigationHeight == 0) {
             return
         }
-        var navigationBarView: View? =
-            activity.window.decorView.findViewById(R.id.id_immersion_navigation_bar)
-        if (navigationBarView == null) {
-            navigationBarView = View(activity)
-            navigationBarView.id = R.id.id_immersion_navigation_bar
-            (activity.window.decorView as? ViewGroup)?.addView(navigationBarView)
-        }
 
-        val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            navigationBarHeight
-        )
-        params.gravity = Gravity.BOTTOM
-        navigationBarView.layoutParams = params
+        val contentView = activity.findViewById<ViewGroup>(android.R.id.content)
+        contentView.setPaddingBottom(navigationHeight)
+        /* var navigationBarView: View? =
+             activity.window.decorView.findViewById(R.id.id_immersion_navigation_bar)
+         if (navigationBarView == null) {
+             navigationBarView = View(activity)
+             navigationBarView.id = R.id.id_immersion_navigation_bar
+             (activity.window.decorView as? ViewGroup)?.addView(navigationBarView)
+         }
+
+         val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
+             FrameLayout.LayoutParams.MATCH_PARENT,
+             navigationHeight
+         )
+         params.gravity = Gravity.BOTTOM
+         navigationBarView.layoutParams = params*/
     }
 
     private fun isNeedReset(layoutParams: ViewGroup.LayoutParams): Boolean {
@@ -91,20 +90,32 @@ object Immersion {
 
     }
 
-    fun isNavigationBarShow(activity: Activity): Boolean {
-        val display: Display = activity.display
-        val realSize = Point()
-        display.getRealSize(realSize)
-        return realSize.y != activity.windowManager.currentWindowMetrics.bounds.height()
+
+    fun getNavigationHeight(activity: Activity): Int {
+        val windowManager = activity.windowManager
+        val d = windowManager.defaultDisplay
+        val realDisplayMetrics = DisplayMetrics()
+        d.getRealMetrics(realDisplayMetrics)
+        val realHeight = realDisplayMetrics.heightPixels
+        val displayMetrics = DisplayMetrics()
+        d.getMetrics(displayMetrics)
+        val displayHeight = displayMetrics.heightPixels
+        return realHeight - displayHeight
     }
 
 
-
-    fun setup(activity: Activity, light: Boolean){
+    fun setup(activity: Activity, light: Boolean) {
         transparentStatusBar(activity.window)
         hideToolbar(activity)
-        lightStatusBar(activity.window,true)
+        lightStatusBar(activity.window, light)
+        fitNavigationBar(activity)
+        val contentView: FrameLayout = activity.window.findViewById<FrameLayout>(android.R.id.content)
+        val contentViewChild = contentView.getChildAt(0)
+        if(contentViewChild!=null){
+            KeyboardUtils.fixAndroidBug5497(activity)
+        }
     }
+
     fun transparentStatusBar(window: Window) {
         //window.statusBarColor = Color.parseColor("#ff0000")
         //theme.applyStyle(R.style.transparentStatusBar, true)
