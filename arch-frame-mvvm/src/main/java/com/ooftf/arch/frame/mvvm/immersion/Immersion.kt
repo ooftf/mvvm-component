@@ -3,16 +3,17 @@ package com.ooftf.arch.frame.mvvm.immersion
 import android.app.Activity
 import android.graphics.Color
 import android.os.Build
-import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.KeyboardUtils
+import com.blankj.utilcode.util.ScreenUtils
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.basic.AppHolder
-import com.ooftf.basic.utils.setPaddingBottom
 import com.ooftf.basic.utils.setPaddingTop
 
 /**
@@ -30,6 +31,9 @@ object Immersion {
                 "android"
             )
         )
+    }
+    val wm by lazy {
+        AppHolder.app.getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager
     }
 
 
@@ -50,28 +54,55 @@ object Immersion {
     }
 
     fun fitNavigationBar(activity: Activity) {
-
-        val navigationHeight = getNavigationHeight(activity)
-        if (navigationHeight == 0) {
+        if (!BarUtils.isSupportNavBar()) {
             return
         }
 
+        val navigationHeight = BarUtils.getNavBarHeight()
         val contentView = activity.findViewById<ViewGroup>(android.R.id.content)
-        contentView.setPaddingBottom(navigationHeight)
-        /* var navigationBarView: View? =
-             activity.window.decorView.findViewById(R.id.id_immersion_navigation_bar)
-         if (navigationBarView == null) {
-             navigationBarView = View(activity)
-             navigationBarView.id = R.id.id_immersion_navigation_bar
-             (activity.window.decorView as? ViewGroup)?.addView(navigationBarView)
-         }
+        var tag = activity.window.decorView.getTag(R.id.tag_content_layout_listener)
+        if (tag == null) {
+            tag =
+                object : View.OnLayoutChangeListener {
+                    var mIsPortrait: Boolean? = null
+                    var rotation: Int? = null
+                    override fun onLayoutChange(
+                        v: View?,
+                        left: Int,
+                        top: Int,
+                        right: Int,
+                        bottom: Int,
+                        oldLeft: Int,
+                        oldTop: Int,
+                        oldRight: Int,
+                        oldBottom: Int
+                    ) {
+                        val display = wm.defaultDisplay
+                        val isPortrait = ScreenUtils.isPortrait()
+                        if (mIsPortrait != isPortrait || rotation != display.rotation) {
+                            mIsPortrait = isPortrait
+                            rotation = display.rotation
+                            if (isPortrait) {
+                                contentView.setPaddingRelative(0, 0, 0, navigationHeight)
+                                contentView.requestLayout()
+                            } else {
+                                if (display.rotation == 1) {
+                                    contentView.setPaddingRelative(0, 0, navigationHeight, 0)
+                                    contentView.requestLayout()
+                                } else {
+                                    contentView.setPaddingRelative(navigationHeight, 0, 0, 0)
+                                    contentView.requestLayout()
+                                }
 
-         val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
-             FrameLayout.LayoutParams.MATCH_PARENT,
-             navigationHeight
-         )
-         params.gravity = Gravity.BOTTOM
-         navigationBarView.layoutParams = params*/
+                            }
+                        }
+
+                    }
+
+                }
+            activity.window.decorView.addOnLayoutChangeListener(tag)
+            activity.window.decorView.setTag(R.id.tag_content_layout_listener, tag)
+        }
     }
 
     private fun isNeedReset(layoutParams: ViewGroup.LayoutParams): Boolean {
@@ -91,36 +122,26 @@ object Immersion {
     }
 
 
-    fun getNavigationHeight(activity: Activity): Int {
-        val windowManager = activity.windowManager
-        val d = windowManager.defaultDisplay
-        val realDisplayMetrics = DisplayMetrics()
-        d.getRealMetrics(realDisplayMetrics)
-        val realHeight = realDisplayMetrics.heightPixels
-        val displayMetrics = DisplayMetrics()
-        d.getMetrics(displayMetrics)
-        val displayHeight = displayMetrics.heightPixels
-        return realHeight - displayHeight
+    fun setupPreOnCreate(activity: Activity) {
+        hideToolbar(activity)
     }
 
-
-    fun setup(activity: Activity, light: Boolean) {
+    fun setupAfterOnCreate(activity: Activity, light: Boolean) {
         transparentStatusBar(activity.window)
-        hideToolbar(activity)
         lightStatusBar(activity.window, light)
+        lightNavigationBar(activity.window, light)
         fitNavigationBar(activity)
-        val contentView: FrameLayout = activity.window.findViewById<FrameLayout>(android.R.id.content)
+        val contentView: FrameLayout =
+            activity.window.findViewById(android.R.id.content)
         val contentViewChild = contentView.getChildAt(0)
-        if(contentViewChild!=null){
+        if (contentViewChild != null) {
             KeyboardUtils.fixAndroidBug5497(activity)
         }
     }
 
     fun transparentStatusBar(window: Window) {
-        //window.statusBarColor = Color.parseColor("#ff0000")
-        //theme.applyStyle(R.style.transparentStatusBar, true)
+        window.statusBarColor = Color.TRANSPARENT
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        //window.setBackgroundDrawable(ColorDrawable(Color.WHITE))
     }
 
     fun hideToolbar(activity: Activity) {
@@ -129,11 +150,21 @@ object Immersion {
 
     fun lightStatusBar(window: Window, light: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ViewCompat.getWindowInsetsController(window.decorView)?.isAppearanceLightStatusBars =
-                light
+            BarUtils.setStatusBarLightMode(window, light)
+            BarUtils.setNavBarLightMode(window, light)
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = Color.parseColor("#32000000")
+            window.navigationBarColor = Color.parseColor("#32000000")
         }
     }
+
+    fun lightNavigationBar(window: Window, light: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            BarUtils.setNavBarLightMode(window, light)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.navigationBarColor = Color.parseColor("#32000000")
+        }
+    }
+
 
 }

@@ -1,12 +1,10 @@
 package com.ooftf.arch.frame.mvvm.fragment
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
-import com.gyf.immersionbar.components.SimpleImmersionOwner
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.arch.frame.mvvm.activity.BaseActivity
 import com.ooftf.arch.frame.mvvm.immersion.Immersion
@@ -15,7 +13,7 @@ import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
 /**
  * Created by master on 2016/4/12.
  */
-abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionOwner,
+abstract class BaseFragment : androidx.fragment.app.Fragment(),
     BackPressedHandler {
     private var mToast: Toast? = null
     private var touchable = false
@@ -59,25 +57,9 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
         super.onActivityCreated(savedInstanceState)
         if (immersionBarEnabled()) {
             activity?.let {
-                Immersion.setup(it, isDarkFont())
+                Immersion.setupAfterOnCreate(it, isDarkFont())
             }
         }
-        //mSimpleImmersionProxy.onActivityCreated(savedInstanceState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //mSimpleImmersionProxy.onDestroy()
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        //mSimpleImmersionProxy.onHiddenChanged(hidden)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        //mSimpleImmersionProxy.onConfigurationChanged(newConfig)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,10 +73,6 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
         return true
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        //mSimpleImmersionProxy.isUserVisibleHint = isVisibleToUser
-    }
 
     fun isRealVisible(): Boolean {
         return view != null && getUserVisibleHint() && !isHidden() && isShowing()
@@ -143,26 +121,15 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(), SimpleImmersionO
      *
      * @return the boolean
      */
-    override fun immersionBarEnabled(): Boolean {
+    open fun immersionBarEnabled(): Boolean {
         return true
     }
 
 
-    override fun initImmersionBar() {
+    open fun initImmersionBar() {
         if (!immersionBarEnabled()) {
             return
         }
-        /*val immersionBar =
-            ImmersionBar.with(this).statusBarDarkFont(isDarkFont()).keyboardEnable(true)
-        var toolbar = getToolbar()
-        if (toolbar == null) {
-            toolbar = view?.findViewById<View>(getToolbarId())
-        }
-        if (toolbar != null) {
-            immersionBar.titleBar(toolbar)
-        }
-        immersionBar.navigationBarColorInt(Color.WHITE).init()*/
-
         var list: MutableList<View> = ArrayList()
         getToolbarIds().forEach {
             view?.findViewById<View>(it)?.let { it ->

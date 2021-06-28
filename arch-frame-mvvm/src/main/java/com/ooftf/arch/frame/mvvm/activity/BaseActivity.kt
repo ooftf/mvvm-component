@@ -2,20 +2,16 @@ package com.ooftf.arch.frame.mvvm.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.graphics.Color
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import com.blankj.utilcode.util.KeyboardUtils
-import com.gyf.immersionbar.ImmersionBar
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.arch.frame.mvvm.immersion.Immersion
 import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
@@ -74,39 +70,9 @@ open class BaseActivity : AppCompatActivity() {
         return this
     }
 
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(newBase)
-        if (isImmersionEnable()) {
-            lifecycle.addObserver(object : LifecycleEventObserver {
-                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                    if (event == Lifecycle.Event.ON_CREATE) {
-                        setUpImmersionBar()
-                    }
-                }
-            })
-        }
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
     }
-
-    private fun setUpImmersionBar() {
-        /* ImmersionBar.with(this@BaseActivity).statusBarDarkFont(isDarkFont())
-             .navigationBarColorInt(Color.WHITE)
-             .keyboardEnable(true, getKeyBordMode())
-             .init()*/
-        var list: MutableList<View> = ArrayList()
-        getToolbarId().forEach {
-            findViewById<View>(it)?.let { it ->
-                list.add(it)
-            }
-        }
-        getToolbar().forEach {
-            list.add(it)
-        }
-        Immersion.setup(this, isDarkFont())
-        Immersion.fitStatusBar(*list.toTypedArray())
-        //ImmersionBar.setTitleBar(this@BaseActivity, *list.toTypedArray())
-        KeyboardUtils.fixSoftInputLeaks(this)
-    }
-
 
     open fun getKeyBordMode() = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
     fun finishSuccess() {
@@ -153,16 +119,39 @@ open class BaseActivity : AppCompatActivity() {
         if (isScreenForcePortrait()) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        if (isImmersionEnable()) {
+            Immersion.setupPreOnCreate(this)
+            lifecycle.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    if (event == Lifecycle.Event.ON_CREATE) {
+                        var list: MutableList<View> = ArrayList()
+                        getToolbarId().forEach {
+                            findViewById<View>(it)?.let { it ->
+                                list.add(it)
+                            }
+                        }
+                        getToolbar().forEach {
+                            list.add(it)
+                        }
+                        Immersion.setupAfterOnCreate(this@BaseActivity, isDarkFont())
+                        Immersion.fitStatusBar(*list.toTypedArray())
+                        KeyboardUtils.fixSoftInputLeaks(this@BaseActivity)
+                    }
+                }
+            })
+        }
         super.onCreate(savedInstanceState)
     }
 
 
+
+    //protected fun isScreenForcePortrait() = true
     /**
      * 是否强制竖屏
      */
-    fun isScreenForcePortrait() = true
-
-
+    open fun isScreenForcePortrait(): Boolean {
+        return true
+    }
     private var mActivityResultCallback: ForResultCallback? = null
     fun startActivityForResult(intent: Intent?, callback: ForResultCallback) {
         mActivityResultCallback = callback
@@ -176,6 +165,7 @@ open class BaseActivity : AppCompatActivity() {
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
+
 
     interface ForResultCallback {
         fun callback(resultCode: Int, data: Intent?)
@@ -195,7 +185,6 @@ open class BaseActivity : AppCompatActivity() {
         mToast = Toast.makeText(this.application, content, duration)
         mToast?.show()
     }
-
 
     fun toast(content: String) {
         toast(content, Toast.LENGTH_SHORT)
