@@ -2,7 +2,9 @@ package com.ooftf.arch.frame.mvvm.immersion
 
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -53,117 +55,25 @@ object Immersion {
         }
     }
 
-    fun fitNavigationBar(activity: Activity) {
+    fun fitNavigationBar(window: Window) {
         if (!BarUtils.isSupportNavBar()) {
             return
         }
-        val navigationHeight = BarUtils.getNavBarHeight()
-        val contentView = activity.findViewById<ViewGroup>(android.R.id.content)
-        var tag = activity.window.decorView.getTag(R.id.tag_content_layout_listener)
+        //listenerChange(window.findViewById<ViewGroup>(android.R.id.content), window)
+        listenerChange(window.decorView, window)
+    }
+
+    fun listenerChange(view: View, window: Window) {
+        var tag = view.getTag(R.id.tag_content_layout_listener)
         if (tag == null) {
-            tag =
-                object : View.OnLayoutChangeListener {
-                    var mLeft = 0
-                    var mTop = 0
-                    var mRight = 0
-                    var mBottom = 0
-                    override fun onLayoutChange(
-                        v: View?,
-                        left: Int,
-                        top: Int,
-                        right: Int,
-                        bottom: Int,
-                        oldLeft: Int,
-                        oldTop: Int,
-                        oldRight: Int,
-                        oldBottom: Int
-                    ) {
-
-                        var paddingLeft = 0
-                        var paddingRight = 0
-                        var paddingBottom = 0
-                        var paddingTop = 0
-                        var navigationRect =
-                            activity.window.decorView.findViewById<View>(android.R.id.navigationBarBackground)
-                                ?.getVisibleRectOfScreen() ?: return
-
-                        if (navigationRect.height() == 0) {
-                            return
-                        }
-                        val decorViewRect =
-                            activity.window.decorView.getVisibleRectOfScreen()
-                        var and = navigationRect.and(decorViewRect)
-                        if(and.height() == 0||and.width()==0){
-                            return
-                        }
-                        navigationRect.and(decorViewRect)
-                        if (navigationRect.left == decorViewRect.left
-                            && navigationRect.right == decorViewRect.right
-                            && navigationRect.bottom == decorViewRect.bottom
-                            && navigationRect.top > decorViewRect.top
-                        ) {//位于下方
-                            paddingLeft = 0
-                            paddingTop = 0
-                            paddingRight = 0
-                            paddingBottom = and.height()
-                        } else if (navigationRect.left > decorViewRect.left
-                            && navigationRect.right == decorViewRect.right
-                            && navigationRect.bottom == decorViewRect.bottom
-                            && navigationRect.top == decorViewRect.top
-                        ) {
-                            //位于右侧
-                            paddingLeft = 0
-                            paddingTop = 0
-                            paddingRight = and.width()
-                            paddingBottom = 0
-
-                        } else if (navigationRect.left == decorViewRect.left
-                            && navigationRect.right < decorViewRect.right
-                            && navigationRect.bottom == decorViewRect.bottom
-                            && navigationRect.top == decorViewRect.top
-                        ) {
-                            // 位于左侧
-                            paddingLeft = and.width()
-                            paddingTop = 0
-                            paddingRight = 0
-                            paddingBottom = 0
-                        }
-                        if (paddingLeft != contentView.paddingLeft
-                            || paddingTop != contentView.paddingTop
-                            || paddingRight != contentView.paddingRight
-                            || paddingBottom != contentView.paddingBottom
-                        ) {
-                            contentView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-                        }
-
-                        /* val display = wm.defaultDisplay
-                         val isPortrait = ScreenUtils.isPortrait()
-                         if (mIsPortrait != isPortrait || rotation != display.rotation) {
-                             mIsPortrait = isPortrait
-                             rotation = display.rotation
-                             if (isPortrait) {
-                                 contentView.setPaddingRelative(0, 0, 0, navigationHeight)
-                                 contentView.requestLayout()
-                             } else {
-                                 if (display.rotation == 1) {
-                                     contentView.setPaddingRelative(0, 0, navigationHeight, 0)
-                                     contentView.requestLayout()
-                                 } else {
-                                     contentView.setPaddingRelative(navigationHeight, 0, 0, 0)
-                                     contentView.requestLayout()
-                                 }
-
-                             }
-                         }*/
-
-
-                    }
-
-                }
-            activity.window.decorView.addOnLayoutChangeListener(tag)
-            activity.window.decorView.setTag(R.id.tag_content_layout_listener, tag)
+            tag =DecorViewOnLayoutChangeListener(window)
+            view.addOnLayoutChangeListener(tag)
+            view.setTag(R.id.tag_content_layout_listener, tag)
         }
     }
+
+
+
 
     private fun isNeedReset(layoutParams: ViewGroup.LayoutParams): Boolean {
         if (layoutParams.height == ViewGroup.LayoutParams.MATCH_PARENT) {
@@ -190,7 +100,7 @@ object Immersion {
         transparentStatusBar(activity.window)
         lightStatusBar(activity.window, light)
         lightNavigationBar(activity.window, light)
-        fitNavigationBar(activity)
+        fitNavigationBar(activity.window)
         val contentView: FrameLayout =
             activity.window.findViewById(android.R.id.content)
         val contentViewChild = contentView.getChildAt(0)
@@ -223,6 +133,7 @@ object Immersion {
             window.navigationBarColor = Color.parseColor("#32000000")
         }
     }
+
 
 
 }
