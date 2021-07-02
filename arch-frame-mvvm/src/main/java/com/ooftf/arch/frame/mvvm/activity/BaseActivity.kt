@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -13,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import com.blankj.utilcode.util.KeyboardUtils
 import com.ooftf.arch.frame.mvvm.R
-import com.ooftf.arch.frame.mvvm.immersion.Immersion
 import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
 import com.ooftf.arch.frame.mvvm.utils.PostcardSerializable
+import com.ooftf.basic.immersion.ImmersionUtil
 import com.ooftf.basic.utils.getCurrentFragment
 import com.trello.lifecycle4.android.lifecycle.AndroidLifecycle
 import com.trello.rxlifecycle3.LifecycleProvider
@@ -120,7 +119,7 @@ open class BaseActivity : AppCompatActivity() {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         if (isImmersionEnable()) {
-            Immersion.setupPreOnCreate(this)
+            ImmersionUtil.setupPreOnCreate(this)
             lifecycle.addObserver(object : LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     if (event == Lifecycle.Event.ON_CREATE) {
@@ -133,8 +132,8 @@ open class BaseActivity : AppCompatActivity() {
                         getToolbar().forEach {
                             list.add(it)
                         }
-                        Immersion.setupAfterOnCreate(this@BaseActivity, isDarkFont())
-                        Immersion.fitStatusBar(*list.toTypedArray())
+                        ImmersionUtil.setupAfterOnCreate(this@BaseActivity, isDarkFont())
+                        ImmersionUtil.fitStatusBar(*list.toTypedArray())
                         KeyboardUtils.fixSoftInputLeaks(this@BaseActivity)
                     }
                 }

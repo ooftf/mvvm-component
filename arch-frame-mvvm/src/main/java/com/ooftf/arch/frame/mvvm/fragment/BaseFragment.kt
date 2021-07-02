@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.Toast
 import com.ooftf.arch.frame.mvvm.R
 import com.ooftf.arch.frame.mvvm.activity.BaseActivity
-import com.ooftf.arch.frame.mvvm.immersion.Immersion
 import com.ooftf.arch.frame.mvvm.utils.BackPressedHandler
+import com.ooftf.basic.immersion.ImmersionUtil
 
 /**
  * Created by master on 2016/4/12.
@@ -57,7 +57,7 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(),
         super.onActivityCreated(savedInstanceState)
         if (immersionBarEnabled()) {
             activity?.let {
-                Immersion.setupAfterOnCreate(it, isDarkFont())
+                ImmersionUtil.setupAfterOnCreate(it, isDarkFont())
             }
         }
     }
@@ -146,7 +146,7 @@ abstract class BaseFragment : androidx.fragment.app.Fragment(),
         getToolbars().forEach {
             list.add(it)
         }
-        Immersion.fitStatusBar(*list.toTypedArray())
+        ImmersionUtil.fitStatusBar(*list.toTypedArray())
     }
 
     override fun onBackPressed(): Boolean {
