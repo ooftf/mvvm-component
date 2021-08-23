@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException
  * @email 994749769@qq.com
  * @date 2019/7/22 0022
  */
-class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
+open class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
 
 
     private var baseLiveData: BaseLiveData? = null
@@ -48,7 +48,8 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
     init {
 
         doOnResponseCodeError { _, body ->
-            baseLiveData?.showMessage(body.getMessage())
+
+            baseShowErrorAction?.invoke(BusinessCodeError(body.getMessage(), body))
         }
         doOnAnyFail {
             baseLiveData?.let { baseLiveData ->
@@ -160,8 +161,21 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
             else -> "网络连接错误，请重试"
         }
 
-        baseLiveData?.showMessage(message)
+        baseShowErrorAction?.invoke(HttpFailureError(message, t))
+    }
 
+    private var baseShowErrorAction: ((NetError) -> Unit)? = {
+        it.message?.let {
+            if (it.isBlank()) {
+                return@let
+            }
+            baseLiveData?.showMessage(it)
+        }
+    }
+
+    fun showErrorAction(action: ((NetError) -> Unit)?): LiveDataCallback<T> {
+        baseShowErrorAction = action
+        return this
     }
 
     var mCall: Call<*>? = null
@@ -169,12 +183,12 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
 
     override fun onHttpCodeError(call: Call<T>, response: Response<T>) {
         super.onHttpCodeError(call, response)
-        baseLiveData?.showMessage("出错了，请重试")
+        baseShowErrorAction?.invoke(HttpCodeError("服务器出错了，请重试", response.code()))
     }
 
     override fun onResponseFailureBodyNull(call: Call<T>, response: Response<T>) {
         super.onResponseFailureBodyNull(call, response)
-        baseLiveData?.showMessage("出错了，请重试")
+        baseShowErrorAction?.invoke(BodyNullError("数据出错了，请重试"))
     }
 
 
@@ -197,6 +211,5 @@ class LiveDataCallback<T : IResponse> : BaseCallback<T>, Cancelable {
     override fun doOnResponseCodeError(doOnResponseCodeError: (call: Call<T>, body: T) -> Unit): LiveDataCallback<T> {
         return super.doOnResponseCodeError(doOnResponseCodeError) as LiveDataCallback<T>
     }
-
 
 }

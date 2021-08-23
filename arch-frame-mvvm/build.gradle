@@ -49,6 +49,6 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     api 'me.tatarka.bindingcollectionadapter2:bindingcollectionadapter:4.0.0'
     api 'me.tatarka.bindingcollectionadapter2:bindingcollectionadapter-recyclerview:4.0.0'
-    api 'com.github.ooftf:basic:0.4.0'
+    api 'com.github.ooftf:basic:0.4.2'
     implementation 'com.blankj:utilcodex:1.30.6'
 }
